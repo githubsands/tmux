@@ -15,6 +15,7 @@
  */
 
 #include <sys/types.h>
+#include <sys/time.h>
 
 #include <fcntl.h>
 #include <stdlib.h>
@@ -24,11 +25,11 @@
 #include "tmux.h"
 
 /*
- * Agent sessions. Each window in an agent session is an agent. The first
- * window is the head agent; the output of every other agent is stripped of
- * escape sequences, split into lines tagged with the agent and fed to the
- * head agent, either through a feed file (named by $TMUX_AGENT_FEED) or by
- * writing it to the head agent's input.
+ * Agent sessions. The first window is the operator, a shell for the user. The
+ * second is the head agent, named control-agent; every other window is an
+ * agent whose output is stripped of escape sequences, split into lines tagged
+ * with the agent and multiplexed to the head agent, either through a feed file
+ * (named by $TMUX_AGENT_FEED) or by writing it to the head agent's input.
  */
 
 #define AGENT_STATE_TEXT 0
@@ -101,12 +102,45 @@ const char *
 agent_role(struct window *w)
 {
 	switch (w->agent) {
+	case WINDOW_AGENT_OPERATOR:
+		return ("operator");
 	case WINDOW_AGENT_HEAD:
-		return ("head");
+		return ("control");
 	case WINDOW_AGENT_WORKER:
 		return ("agent");
 	}
 	return ("");
+}
+
+/* Next default name for an agent in a session: agent-1, agent-2 and so on. */
+char *
+agent_name(struct session *s)
+{
+	char	*name;
+
+	xasprintf(&name, "agent-%u", ++s->agent_next);
+	return (name);
+}
+
+/*
+ * Status of an agent: exited if its pane is dead, running if it has written
+ * output in the last AGENT_IDLE_TIME seconds, otherwise idle. The operator is
+ * not an agent and has no status.
+ */
+const char *
+agent_status(struct window *w)
+{
+	struct window_pane	*wp = w->active;
+	struct timeval		 tv;
+
+	if (w->agent == WINDOW_AGENT_NONE || w->agent == WINDOW_AGENT_OPERATOR)
+		return ("");
+	if (wp == NULL || wp->fd == -1 || (wp->flags & PANE_EXITED))
+		return ("exited");
+	if (gettimeofday(&tv, NULL) == 0 &&
+	    tv.tv_sec - w->activity_time.tv_sec < AGENT_IDLE_TIME)
+		return ("running");
+	return ("idle");
 }
 
 /* Deliver one line of agent output to each agent session it belongs to. */

@@ -186,6 +186,9 @@ spawn_window(struct spawn_context *sc, char **cause)
 			w->name = format_single(item, sc->name, c, s, NULL,
 			    NULL);
 			options_set_number(w->options, "automatic-rename", 0);
+		} else if (w->agent == WINDOW_AGENT_WORKER) {
+			w->name = agent_name(s);
+			options_set_number(w->options, "automatic-rename", 0);
 		} else
 			w->name = default_window_name(w);
 	}
@@ -282,7 +285,7 @@ spawn_pane(struct spawn_context *sc, char **cause)
 			cmd = options_get_string(s->options, "agent-command");
 		else
 			cmd = NULL;
-		if (w->agent != WINDOW_AGENT_NONE && *cmd == '\0')
+		if (cmd != NULL && *cmd == '\0')
 			cmd = agent_command(s);
 		if (cmd == NULL || *cmd == '\0')
 			cmd = options_get_string(s->options, "default-command");

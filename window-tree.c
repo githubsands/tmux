@@ -30,6 +30,7 @@ static void		 window_tree_free(struct window_mode_entry *);
 static void		 window_tree_resize(struct window_mode_entry *, u_int,
 			     u_int);
 static void		 window_tree_update(struct window_mode_entry *);
+static void		 window_tree_timer_callback(int, short, void *);
 static void		 window_tree_key(struct window_mode_entry *,
 			     struct client *, struct session *,
 			     struct winlink *, key_code, struct mouse_event *);
@@ -45,9 +46,13 @@ static void		 window_tree_key(struct window_mode_entry *,
 		"#{?window_format," \
 			"#{?window_marked_flag,#[reverse],}" \
 			"#{window_name}#{window_flags}" \
-			"#{?#{&&:#{==:#{window_panes},1},#{&&:#{pane_title},#{!=:#{pane_title},#{host_short}}}},: \"#{pane_title}\",}" \
+			"#{?window_agent_status," \
+				" [#{window_agent_status}]" \
+			"," \
+				"#{?#{&&:#{==:#{window_panes},1},#{&&:#{pane_title},#{!=:#{pane_title},#{host_short}}}},: \"#{pane_title}\",}" \
+			"}" \
 		"," \
-			"#{session_windows} windows" \
+			"#{?session_agents,#{session_windows} agents,#{session_windows} windows}" \
 			"#{?session_grouped, " \
 				"(group #{session_group}: " \
 				"#{session_group_list})," \
@@ -142,6 +147,10 @@ struct window_tree_modedata {
 
 	int				  offset;
 
+	struct event			  timer;
+
+	int				  vertical;
+	u_int				  top;
 	int				  left;
 	int				  right;
 	u_int				  start;
@@ -419,7 +428,7 @@ window_tree_build_session(struct session *s, void *modedata,
 
 	text = format_single(NULL, data->format, NULL, s, NULL, NULL);
 
-	if (data->type == WINDOW_TREE_SESSION)
+	if (data->type == WINDOW_TREE_SESSION && (~s->flags & SESSION_AGENTS))
 		expanded = 0;
 	else
 		expanded = 1;
@@ -526,6 +535,123 @@ window_tree_draw_label(struct screen_write_ctx *ctx, u_int px, u_int py,
 	screen_write_puts(ctx, gc, "%s", label);
 }
 
+/*
+ * Draw an agent session with one agent per row, top to bottom, so every agent
+ * is visible at once. Rows are separated by a line and labelled on the left.
+ */
+static void
+window_tree_draw_agents(struct window_tree_modedata *data, struct session *s,
+    struct screen_write_ctx *ctx, u_int sx, u_int sy)
+{
+	struct options		*oo = s->options;
+	struct winlink		*wl;
+	struct window		*w;
+	u_int			 cx = ctx->s->cx, cy = ctx->s->cy;
+	u_int			 loop, total, visible, each, height, offset;
+	u_int			 current, start, end, remaining, i;
+	struct grid_cell	 gc;
+	int			 colour, active_colour;
+	char			*label;
+
+	total = winlink_count(&s->windows);
+
+	memcpy(&gc, &grid_default_cell, sizeof gc);
+	colour = options_get_number(oo, "display-panes-colour");
+	active_colour = options_get_number(oo, "display-panes-active-colour");
+
+	/* Each row needs at least one line plus a separator. */
+	visible = (sy + 1) / 2;
+	if (visible == 0)
+		visible = 1;
+	if (visible > total)
+		visible = total;
+
+	current = 0;
+	RB_FOREACH(wl, winlinks, &s->windows) {
+		if (wl == s->curw)
+			break;
+		current++;
+	}
+
+	if (current < visible) {
+		start = 0;
+		end = visible;
+	} else if (current >= total - visible) {
+		start = total - visible;
+		end = total;
+	} else {
+		start = current - (visible / 2);
+		end = start + visible;
+	}
+
+	if (data->offset < -(int)start)
+		data->offset = -(int)start;
+	if (data->offset > (int)(total - end))
+		data->offset = (int)(total - end);
+	start += data->offset;
+	end += data->offset;
+
+	each = (sy - (visible - 1)) / visible;
+	remaining = (sy - (visible - 1)) - (visible * each);
+	if (each == 0 || sx == 0)
+		return;
+
+	data->left = data->right = -1;
+	data->vertical = 1;
+	data->top = cy;
+	data->start = start;
+	data->end = end;
+	data->each = each + 1;
+
+	i = loop = 0;
+	RB_FOREACH(wl, winlinks, &s->windows) {
+		if (loop == end)
+			break;
+		if (loop < start) {
+			loop++;
+			continue;
+		}
+		w = wl->window;
+
+		if (wl == s->curw)
+			gc.fg = active_colour;
+		else
+			gc.fg = colour;
+
+		offset = i * (each + 1);
+		if (loop == end - 1)
+			height = each + remaining;
+		else
+			height = each;
+
+		screen_write_cursormove(ctx, cx, cy + offset, 0);
+		screen_write_preview(ctx, &w->active->base, sx, height);
+
+		xasprintf(&label, " %u:%s [%s]%s%s ", wl->idx, w->name,
+		    w->agent == WINDOW_AGENT_OPERATOR ? "operator" :
+		    agent_status(w), (i == 0 && start != 0) ? " ^" : "",
+		    (loop == end - 1 && end != total) ? " v" : "");
+		if (strlen(label) > sx) {
+			free(label);
+			xasprintf(&label, "%u", wl->idx);
+		}
+		if (strlen(label) <= sx) {
+			screen_write_cursormove(ctx, cx + sx - strlen(label),
+			    cy + offset, 0);
+			screen_write_puts(ctx, &gc, "%s", label);
+		}
+		free(label);
+
+		if (loop != end - 1) {
+			screen_write_cursormove(ctx, cx, cy + offset + height, 0);
+			screen_write_hline(ctx, sx, 0, 0);
+		}
+		loop++;
+
+		i++;
+	}
+}
+
 static void
 window_tree_draw_session(struct window_tree_modedata *data, struct session *s,
     struct screen_write_ctx *ctx, u_int sx, u_int sy)
@@ -539,6 +665,12 @@ window_tree_draw_session(struct window_tree_modedata *data, struct session *s,
 	struct grid_cell	 gc;
 	int			 colour, active_colour, left, right;
 	char			*label;
+
+	if (s->flags & SESSION_AGENTS) {
+		window_tree_draw_agents(data, s, ctx, sx, sy);
+		return;
+	}
+	data->vertical = 0;
 
 	total = winlink_count(&s->windows);
 
@@ -745,6 +877,7 @@ window_tree_draw_window(struct window_tree_modedata *data, struct session *s,
 	} else
 		data->right = -1;
 
+	data->vertical = 0;
 	data->start = start;
 	data->end = end;
 	data->each = each;
@@ -905,6 +1038,7 @@ window_tree_init(struct window_mode_entry *wme, struct cmd_find_state *fs,
 	struct window_pane		*wp = wme->wp;
 	struct window_tree_modedata	*data;
 	struct screen			*s;
+	struct timeval			 tv = { .tv_sec = 1 };
 
 	wme->data = data = xcalloc(1, sizeof *data);
 	data->wp = wp;
@@ -943,7 +1077,30 @@ window_tree_init(struct window_mode_entry *wme, struct cmd_find_state *fs,
 
 	data->type = WINDOW_TREE_NONE;
 
+	evtimer_set(&data->timer, window_tree_timer_callback, data);
+	evtimer_add(&data->timer, &tv);
+
 	return (s);
+}
+
+/* Refresh the tree every second while agent sessions exist for their status. */
+static void
+window_tree_timer_callback(__unused int fd, __unused short events, void *arg)
+{
+	struct window_tree_modedata	*data = arg;
+	struct session			*s;
+	struct timeval			 tv = { .tv_sec = 1 };
+
+	RB_FOREACH(s, sessions, &sessions) {
+		if (s->flags & SESSION_AGENTS)
+			break;
+	}
+	if (s != NULL) {
+		mode_tree_build(data->data);
+		mode_tree_draw(data->data);
+		data->wp->flags |= PANE_REDRAW;
+	}
+	evtimer_add(&data->timer, &tv);
 }
 
 static void
@@ -974,6 +1131,7 @@ window_tree_free(struct window_mode_entry *wme)
 		return;
 
 	data->dead = 1;
+	evtimer_del(&data->timer);
 	mode_tree_free(data->data);
 	window_tree_destroy(data);
 }
@@ -1166,7 +1324,7 @@ window_tree_kill_tagged_callback(struct client *c, void *modedata,
 
 static key_code
 window_tree_mouse(struct window_tree_modedata *data, key_code key, u_int x,
-    struct window_tree_itemdata *item)
+    u_int y, struct window_tree_itemdata *item)
 {
 	struct session		*s;
 	struct winlink		*wl;
@@ -1181,11 +1339,21 @@ window_tree_mouse(struct window_tree_modedata *data, key_code key, u_int x,
 	if (data->right != -1 && x >= (u_int)data->right)
 		return ('>');
 
-	if (data->left != -1)
+	if (data->vertical) {
+		if (y < data->top || data->end == 0)
+			x = 0;
+		else {
+			x = (y - data->top) / data->each;
+			if (data->start + x >= data->end)
+				x = data->end - data->start - 1;
+		}
+	} else if (data->left != -1)
 		x -= data->left;
 	else if (x != 0)
 		x--;
-	if (x == 0 || data->end == 0)
+	if (data->vertical)
+		;
+	else if (x == 0 || data->end == 0)
 		x = 0;
 	else {
 		x = x / data->each;
@@ -1248,7 +1416,7 @@ window_tree_key(struct window_mode_entry *wme, struct client *c,
 		data->offset = 0;
 	}
 	if (KEYC_IS_MOUSE(key) && m != NULL)
-		key = window_tree_mouse(data, key, x, item);
+		key = window_tree_mouse(data, key, x, y, item);
 	switch (key) {
 	case '<':
 		data->offset--;

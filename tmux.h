@@ -1075,6 +1075,7 @@ struct window {
 #define WINDOW_AGENT_NONE 0
 #define WINDOW_AGENT_HEAD 1
 #define WINDOW_AGENT_WORKER 2
+#define WINDOW_AGENT_OPERATOR 3
 	int		 agent;
 
 	int		 alerts_queued;
@@ -1196,6 +1197,7 @@ struct session {
 
 	int		 agent_fd;
 	char		*agent_feed;
+	u_int		 agent_next;
 
 	u_int		 attached;
 
@@ -3080,11 +3082,14 @@ void	control_notify_session_window_changed(struct session *);
 
 /* agent.c */
 #define AGENT_COUNT_MAX 64
+#define AGENT_IDLE_TIME 5
 void		 agent_session_init(struct session *);
 void		 agent_session_free(struct session *);
 struct window_pane *agent_head(struct session *);
 const char	*agent_command(struct session *);
 const char	*agent_role(struct window *);
+char		*agent_name(struct session *);
+const char	*agent_status(struct window *);
 void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
 
 /* cmd-new-session.c */

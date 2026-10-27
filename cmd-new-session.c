@@ -310,6 +310,28 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 	if (agents)
 		agent_session_init(s);
 
+	/*
+	 * In an agent session, spawn the operator shell first so it is the
+	 * current window, followed by the head agent.
+	 */
+	if (agents) {
+		memset(&asc, 0, sizeof asc);
+		asc.item = item;
+		asc.s = s;
+		if (!detached)
+			asc.tc = c;
+		asc.name = "operator";
+		asc.agent = WINDOW_AGENT_OPERATOR;
+		asc.idx = -1;
+		asc.cwd = args_get(args, 'c');
+		if (spawn_window(&asc, &cause) == NULL) {
+			session_destroy(s, 0, __func__);
+			cmdq_error(item, "create operator failed: %s", cause);
+			free(cause);
+			goto fail;
+		}
+	}
+
 	/* Spawn the initial window, the head agent in an agent session. */
 	sc.item = item;
 	sc.s = s;
@@ -319,15 +341,15 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 	sc.name = args_get(args, 'n');
 	if (agents) {
 		sc.agent = WINDOW_AGENT_HEAD;
+		sc.flags = SPAWN_DETACHED;
 		if (sc.name == NULL)
-			sc.name = "head";
-	}
+			sc.name = "control-agent";
+	} else
+		sc.flags = 0;
 	args_to_vector(args, &sc.argc, &sc.argv);
 
 	sc.idx = -1;
 	sc.cwd = args_get(args, 'c');
-
-	sc.flags = 0;
 
 	if (spawn_window(&sc, &cause) == NULL) {
 		session_destroy(s, 0, __func__);
@@ -336,7 +358,7 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 		goto fail;
 	}
 
-	/* Spawn the other agents after the head, leaving the head current. */
+	/* Spawn the other agents after the head, leaving the operator current. */
 	nagents = agents ? options_get_number(s->options, "agent-count") : 0;
 	for (i = 0; i < nagents; i++) {
 		memset(&asc, 0, sizeof asc);

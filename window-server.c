@@ -563,10 +563,10 @@ window_server_build_server(struct window_server_modedata *data,
 		}
 
 		idx = (int)strtonum(f[3], 0, INT_MAX, NULL);
-		if (*f[5] != '\0') {
+		if (*f[6] != '\0') {
 			xasprintf(&text, "%s%s [%s]%s", f[4],
 			    *f[7] == '1' ? "*" : "", f[6],
-			    strcmp(f[5], "head") == 0 ? " (head)" : "");
+			    strcmp(f[5], "control") == 0 ? " (control)" : "");
 		} else
 			xasprintf(&text, "%s%s", f[4], *f[7] == '1' ? "*" : "");
 		xasprintf(&name, "%d", idx);

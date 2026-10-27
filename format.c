@@ -2157,6 +2157,27 @@ format_cb_window_agent(struct format_tree *ft)
 	return (NULL);
 }
 
+/* Callback for window_agent_status. */
+static void *
+format_cb_window_agent_status(struct format_tree *ft)
+{
+	if (ft->w != NULL)
+		return (xstrdup(agent_status(ft->w)));
+	return (NULL);
+}
+
+/* Callback for session_agents. */
+static void *
+format_cb_session_agents(struct format_tree *ft)
+{
+	if (ft->s != NULL) {
+		if (ft->s->flags & SESSION_AGENTS)
+			return (xstrdup("1"));
+		return (xstrdup("0"));
+	}
+	return (NULL);
+}
+
 /* Callback for window_activity_flag. */
 static void *
 format_cb_window_activity_flag(struct format_tree *ft)
@@ -2836,6 +2857,9 @@ static const struct format_table_entry format_table[] = {
 	{ "session_activity", FORMAT_TABLE_TIME,
 	  format_cb_session_activity
 	},
+	{ "session_agents", FORMAT_TABLE_STRING,
+	  format_cb_session_agents
+	},
 	{ "session_alerts", FORMAT_TABLE_STRING,
 	  format_cb_session_alerts
 	},
@@ -2931,6 +2955,9 @@ static const struct format_table_entry format_table[] = {
 	},
 	{ "window_agent", FORMAT_TABLE_STRING,
 	  format_cb_window_agent
+	},
+	{ "window_agent_status", FORMAT_TABLE_STRING,
+	  format_cb_window_agent_status
 	},
 	{ "window_bell_flag", FORMAT_TABLE_STRING,
 	  format_cb_window_bell_flag

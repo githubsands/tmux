@@ -4,7 +4,8 @@ custom agent systems
 
 A tmux fork where a session can run a team of CLI agents (claude, codex or
 openai). Each agent is a window running one agent process. The first window
-is the head agent; the output of every other agent is fed to it.
+is `operator`, a shell for you; the second is `control-agent`, the head agent,
+which gets the output of every other agent as one multiplexed stream.
 
 It uses its own socket (`agents`) and `$TMUX_AGENTS`, so it never talks to a
 stock tmux server.
@@ -18,8 +19,8 @@ If `tmux -V` still shows the stock version in an old shell, run `rehash`.
 
 ## Commands
 
-    tmux new-agent-session -s research          # head agent only
-    tmux new-agent-session -s research -N 3     # head + 3 agents
+    tmux new-agent-session -s research          # operator + control-agent
+    tmux new-agent-session -s research -N 3     # ... + agent-1..agent-3
     tmux new-agent-session -s research -a codex # use codex instead of claude
     tmux new-agent -t research                  # add an agent to a session
     tmux attach -t research
@@ -48,3 +49,5 @@ agent.
 # evals
 
 // tbd:
+
+# sandbox

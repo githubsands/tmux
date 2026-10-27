@@ -2,7 +2,47 @@
 
 A tmux fork where a session can run a team of CLI agents (claude, codex or
 openai). Each agent is a window running one agent process. The first window
-is the head agent; the output of every other agent is fed to it.
+is `operator`, a shell for you; the second is `control-agent`, the head agent,
+which gets the output of every other agent as one multiplexed stream.
+
+```mermaid
+flowchart TB
+    subgraph S["session: research (new-agent-session -s research -N 3)"]
+        direction TB
+        OP["🧑‍💻 <b>0: operator</b><br/>your shell"]
+        CA["🧠 <b>1: control-agent</b><br/>head agent · claude / codex / openai"]
+
+        MUX{{"multiplexer<br/>strip escapes · tag lines [index:name]"}}
+        FEED[("$TMUX_AGENT_FEED<br/>log file")]
+
+        A1["🤖 <b>2: agent-1</b><br/>running"]
+        A2["🤖 <b>3: agent-2</b><br/>idle"]
+        A3["🤖 <b>4: agent-3</b><br/>exited"]
+
+        A1 & A2 & A3 -- output --> MUX
+        MUX -- "agent-feed file" --> FEED
+        FEED -. reads .-> CA
+        MUX -- "agent-feed input" --> CA
+    end
+
+    classDef op fill:#e8f1ff,stroke:#3b6fd8,color:#0b2a66
+    classDef ctl fill:#f3e8ff,stroke:#8a3fd1,color:#3b0a66
+    classDef run fill:#e6f7ec,stroke:#2f9e5a,color:#0d3d20
+    classDef idle fill:#fff6e0,stroke:#d19a1f,color:#5a3d00
+    classDef dead fill:#fde8e8,stroke:#c94040,color:#5c1010
+    classDef mux fill:#f2f2f2,stroke:#666,color:#222
+    class OP op
+    class CA ctl
+    class A1 run
+    class A2 idle
+    class A3 dead
+    class MUX,FEED mux
+```
+
+Feed lines look like:
+
+    [2:agent-1] wrote parser.c
+    [3:agent-2] tests passing
 
 It uses its own socket (`agents`) and `$TMUX_AGENTS`, so it never talks to a
 stock tmux server.
@@ -16,8 +56,8 @@ If `tmux -V` still shows the stock version in an old shell, run `rehash`.
 
 ## Commands
 
-    tmux new-agent-session -s research          # head agent only
-    tmux new-agent-session -s research -N 3     # head + 3 agents
+    tmux new-agent-session -s research          # operator + control-agent
+    tmux new-agent-session -s research -N 3     # ... + agent-1..agent-3
     tmux new-agent-session -s research -a codex # use codex instead of claude
     tmux new-agent -t research                  # add an agent to a session
     tmux attach -t research

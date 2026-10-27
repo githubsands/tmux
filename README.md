@@ -57,13 +57,18 @@ its private key:
 
     gpg --clearsign report.md            # inside agent-1: signs as research/agent-1
 
-When a session is created the keys are distributed: once every agent has a
-key, each one imports and locally signs every other agent's public key, so
-agents can verify each other (`gpg --verify` shows `Good signature ... [full]`).
-An agent added later with `new-agent` joins the exchange. All public keys are
-collected in `$TMUX_AGENT_KEYS` for the operator:
+You, the operator, certify every agent. When a session is created, once
+every agent has a key, each agent's public key is imported into your keyring
+and signed with your key (gpg may ask for your passphrase). Your public key
+and the signed agent keys are then written to `$TMUX_AGENT_KEYS` and given to
+every agent, which trusts your key, so agents verify each other through your
+signature (`gpg --verify` shows `Good signature ... [full]`). Agents never
+sign each other's keys. An agent added later with `new-agent` is signed and
+distributed the same way.
 
-    gpg --import "$TMUX_AGENT_KEYS"      # from the operator window
+By default your first secret key is used; pick another with:
+
+    tmux set -g agent-operator-key you@example.com
 
 Fingerprints are listed in the last column of `$TMUX_AGENT_RECORD`. Keys have
 no passphrase so agents can sign unattended; they are protected by the
@@ -101,6 +106,7 @@ with it. Servers made elsewhere can be deleted with `-p` and `-l`.
 | `head-agent-command` | command for the head agent     | empty    |
 | `agent-feed`         | `off`, `file`, `input`, `both` | `file`   |
 | `agent-restore`      | `on`, `off`                    | `on`     |
+| `agent-operator-key` | key that signs agents' keys    | first secret key |
 
     tmux set -g agent codex
     tmux set -t research agent-command 'claude --model opus'

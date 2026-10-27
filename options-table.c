@@ -458,6 +458,14 @@ const struct options_table_entry options_table[] = {
 		  "input, or both."
 	},
 
+	{ .name = "agent-operator-key",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .default_str = "",
+	  .text = "Key the operator signs agents' keys with. If empty, the first "
+		  "secret key in the user's keyring is used."
+	},
+
 	{ .name = "agent-restore",
 	  .type = OPTIONS_TABLE_FLAG,
 	  .scope = OPTIONS_TABLE_SESSION,

@@ -46,9 +46,10 @@
  * Every agent also has its own identity: an OpenPGP key in a GnuPG home
  * directory of its own (named by $GNUPGHOME in the agent), so each agent holds
  * a private key that no other agent can read. Once every agent in a session
- * has a key, the public keys are distributed: each agent imports and locally
- * signs the keys of the others, and all of them are written to the file named
- * by $TMUX_AGENT_KEYS.
+ * has a key, the operator (the user's own key, or agent-operator-key) signs
+ * each agent's key. The operator's key and the signed agent keys are then
+ * given to every agent, which trusts the operator, so agents can verify each
+ * other; they are also written to the file named by $TMUX_AGENT_KEYS.
  */
 
 #define AGENT_STATE_TEXT 0
@@ -602,49 +603,66 @@ agent_distribute_callback(struct job *job)
 }
 
 /*
- * Distribute the public keys of a session's agents once none is still being
- * created: every agent imports and locally signs every other agent's key,
- * and all the public keys are collected in the session's keys file.
+ * Have the operator sign the keys of a session's agents once none is still
+ * being created, then distribute them. This runs gpg with the user's own
+ * keyring: each agent's public key is imported and signed with the operator's
+ * key (which may ask for its passphrase), the operator's key and the signed
+ * agent keys are exported to the session's keys file, and every agent imports
+ * that file and trusts the operator's key ultimately.
  */
 static void
 agent_distribute(struct session *s)
 {
-	struct winlink	*wl, *wl2;
-	struct window	*w, *w2;
-	struct evbuffer	*evb;
-	const char	*keys;
-	char		*home, *home2, *cmd;
+	struct winlink		*wl;
+	struct window		*w;
+	struct evbuffer		*evb;
+	struct environ_entry	*envent;
+	const char		*operator;
+	char			*home, *cmd;
 
 	RB_FOREACH(wl, winlinks, &s->windows) {
 		if (wl->window->agent_key_job)
 			return;
 	}
-	keys = environ_find(s->environ, "TMUX_AGENT_KEYS") != NULL ?
-	    environ_find(s->environ, "TMUX_AGENT_KEYS")->value : NULL;
-	if (keys == NULL)
+	if ((envent = environ_find(s->environ, "TMUX_AGENT_KEYS")) == NULL ||
+	    envent->value == NULL)
 		return;
+	operator = options_get_string(s->options, "agent-operator-key");
+	if (strchr(operator, '\'') != NULL) {
+		log_debug("%s: bad agent-operator-key", __func__);
+		return;
+	}
 
 	evb = evbuffer_new();
 	evbuffer_add_printf(evb, "g() { h=$1; shift; gpg --homedir \"$h\" "
-	    "--batch --no-tty --quiet \"$@\" >/dev/null 2>&1; }; : > '%s'; ",
-	    keys);
+	    "--batch --no-tty --quiet \"$@\" >/dev/null 2>&1; }; "
+	    "op='%s'; [ -n \"$op\" ] || op=$(gpg --batch --list-secret-keys "
+	    "--with-colons 2>/dev/null | awk -F: '$1 == \"sec\" { print $5; "
+	    "exit }'); op=$(gpg --batch --list-secret-keys --with-colons "
+	    "\"$op\" 2>/dev/null | awk -F: '$1 == \"fpr\" { print $10; "
+	    "exit }'); [ -n \"$op\" ] || { echo 'no operator key'; exit 1; }; "
+	    "keys=\"$op\"; ", operator);
 	RB_FOREACH(wl, winlinks, &s->windows) {
 		w = wl->window;
 		if (w->agent_key == NULL)
 			continue;
 		home = agent_key_home(w);
-		evbuffer_add_printf(evb, "cat '%s/public.asc' >> '%s'; ", home,
-		    keys);
-		RB_FOREACH(wl2, winlinks, &s->windows) {
-			w2 = wl2->window;
-			if (w2 == w || w2->agent_key == NULL)
-				continue;
-			home2 = agent_key_home(w2);
-			evbuffer_add_printf(evb, "g '%s' --import '%s/public.asc' "
-			    "&& g '%s' --quick-lsign-key %s; ", home, home2,
-			    home, w2->agent_key);
-			free(home2);
-		}
+		evbuffer_add_printf(evb, "gpg --batch --quiet --import "
+		    "'%s/public.asc' && gpg --batch --yes --quiet -u \"$op\" "
+		    "--quick-sign-key %s || exit 1; keys=\"$keys %s\"; ", home,
+		    w->agent_key, w->agent_key);
+		free(home);
+	}
+	evbuffer_add_printf(evb, "gpg --batch --armor --export $keys > '%s' || "
+	    "exit 1; ", envent->value);
+	RB_FOREACH(wl, winlinks, &s->windows) {
+		w = wl->window;
+		if (w->agent_key == NULL)
+			continue;
+		home = agent_key_home(w);
+		evbuffer_add_printf(evb, "g '%s' --import '%s' && echo \"$op:6:\" "
+		    "| g '%s' --import-ownertrust || exit 1; ", home,
+		    envent->value, home);
 		free(home);
 	}
 	evbuffer_add(evb, "true", 5);

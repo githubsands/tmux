@@ -7,6 +7,31 @@ openai). Each agent is a window running one agent process. The first window
 is `operator`, a shell for you; the second is `control-agent`, the head agent,
 which gets the output of every other agent as one multiplexed stream.
 
+    session "research"  (tmux new-agent-session -s research -N 3)
+
+     0: operator            1: control-agent (head)
+    +---------------+      +--------------------------+
+    | you, in a     |      | claude / codex / openai  |
+    | plain shell   |      |                          |
+    +---------------+      +--------------------------+
+                                ^                ^
+                   agent-feed   | input          | file
+                                |                |
+                         +------+------+   $TMUX_AGENT_FEED
+                         | multiplexer |------>  (log file)
+                         +------+------+
+                                ^  escape codes stripped,
+                                |  lines tagged [index:name]
+              +-----------------+-----------------+
+              |                 |                 |
+       +-------------+   +-------------+   +-------------+
+       | 2: agent-1  |   | 3: agent-2  |   | 4: agent-3  |
+       |  [running]  |   |   [idle]    |   |  [exited]   |
+       +-------------+   +-------------+   +-------------+
+
+    feed lines:  [2:agent-1] wrote parser.c
+                 [3:agent-2] tests passing
+
 It uses its own socket (`agents`) and `$TMUX_AGENTS`, so it never talks to a
 stock tmux server.
 

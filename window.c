@@ -956,6 +956,9 @@ window_pane_destroy(struct window_pane *wp)
 	window_pane_reset_mode_all(wp);
 	free(wp->searchstr);
 
+	if (wp->agent_line != NULL)
+		evbuffer_free(wp->agent_line);
+
 	if (wp->fd != -1) {
 #ifdef HAVE_UTEMPTER
 		utempter_remove_record(wp->fd);
@@ -1002,6 +1005,11 @@ window_pane_read_callback(__unused struct bufferevent *bufev, void *data)
 	char				*new_data;
 	size_t				 new_size;
 	struct client			*c;
+
+	if (wp->window->agent == WINDOW_AGENT_WORKER) {
+		new_data = window_pane_get_new_data(wp, &wp->offset, &new_size);
+		agent_pane_output(wp, (const u_char *)new_data, new_size);
+	}
 
 	if (wp->pipe_fd != -1) {
 		new_data = window_pane_get_new_data(wp, wpo, &new_size);

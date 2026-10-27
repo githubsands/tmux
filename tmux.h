@@ -1005,6 +1005,9 @@ struct window_pane {
 	struct bufferevent *pipe_event;
 	struct window_pane_offset pipe_offset;
 
+	struct evbuffer	*agent_line;
+	int		 agent_state;
+
 	struct screen	*screen;
 	struct screen	 base;
 
@@ -1068,6 +1071,11 @@ struct window {
 #define WINDOW_WASZOOMED 0x10
 #define WINDOW_RESIZE 0x20
 #define WINDOW_ALERTFLAGS (WINDOW_BELL|WINDOW_ACTIVITY|WINDOW_SILENCE)
+
+#define WINDOW_AGENT_NONE 0
+#define WINDOW_AGENT_HEAD 1
+#define WINDOW_AGENT_WORKER 2
+	int		 agent;
 
 	int		 alerts_queued;
 	TAILQ_ENTRY(window) alerts_entry;
@@ -1183,7 +1191,11 @@ struct session {
 
 #define SESSION_PASTING 0x1
 #define SESSION_ALERTED 0x2
+#define SESSION_AGENTS 0x4
 	int		 flags;
+
+	int		 agent_fd;
+	char		*agent_feed;
 
 	u_int		 attached;
 
@@ -1911,6 +1923,8 @@ struct spawn_context {
 
 	int			  idx;
 	const char		 *cwd;
+
+	int			  agent;
 
 	int			  flags;
 #define SPAWN_KILL 0x1
@@ -3060,6 +3074,19 @@ void	control_notify_session_renamed(struct session *);
 void	control_notify_session_created(struct session *);
 void	control_notify_session_closed(struct session *);
 void	control_notify_session_window_changed(struct session *);
+
+/* agent.c */
+void		 agent_session_init(struct session *);
+void		 agent_session_free(struct session *);
+struct window_pane *agent_head(struct session *);
+const char	*agent_role(struct window *);
+void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
+
+/* cmd-new-session.c */
+enum cmd_retval	 cmd_new_session_run(struct cmd *, struct cmdq_item *, int);
+
+/* cmd-new-window.c */
+enum cmd_retval	 cmd_new_window_run(struct cmd *, struct cmdq_item *);
 
 /* session.c */
 extern struct sessions sessions;

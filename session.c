@@ -128,6 +128,8 @@ session_create(const char *prefix, const char *name, const char *cwd,
 	s->environ = env;
 	s->options = oo;
 
+	s->agent_fd = -1;
+
 	status_update_cache(s);
 
 	s->tio = NULL;
@@ -213,6 +215,7 @@ session_destroy(struct session *s, int notify, const char *from)
 		notify_session("session-closed", s);
 
 	free(s->tio);
+	agent_session_free(s);
 
 	if (event_initialized(&s->lock_timer))
 		event_del(&s->lock_timer);

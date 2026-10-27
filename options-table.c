@@ -50,6 +50,9 @@ static const char *options_table_status_justify_list[] = {
 static const char *options_table_status_position_list[] = {
 	"top", "bottom", NULL
 };
+static const char *options_table_agent_feed_list[] = {
+	"off", "file", "input", "both", NULL
+};
 static const char *options_table_bell_action_list[] = {
 	"none", "any", "current", "other", NULL
 };
@@ -415,12 +418,38 @@ const struct options_table_entry options_table[] = {
 	  .text = "Action to take on a bell alert."
 	},
 
+	{ .name = "agent-command",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .default_str = "",
+	  .text = "Command to run in new agents in an agent session. If empty, "
+		  "default-command is used."
+	},
+
+	{ .name = "agent-feed",
+	  .type = OPTIONS_TABLE_CHOICE,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .choices = options_table_agent_feed_list,
+	  .default_num = 1,
+	  .text = "How agent output reaches the head agent: written to the "
+		  "file named by TMUX_AGENT_FEED, typed into the head agent's "
+		  "input, or both."
+	},
+
 	{ .name = "default-command",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_SESSION,
 	  .default_str = "",
 	  .text = "Default command to run in new panes. If empty, a shell is "
 		  "started."
+	},
+
+	{ .name = "head-agent-command",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .default_str = "",
+	  .text = "Command to run as the head agent of a new agent session. If "
+		  "empty, default-command is used."
 	},
 
 	{ .name = "default-shell",

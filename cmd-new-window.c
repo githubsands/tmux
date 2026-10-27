@@ -51,6 +51,13 @@ const struct cmd_entry cmd_new_window_entry = {
 static enum cmd_retval
 cmd_new_window_exec(struct cmd *self, struct cmdq_item *item)
 {
+	return (cmd_new_window_run(self, item));
+}
+
+/* Create a new window, which is an agent if the session is an agent session. */
+enum cmd_retval
+cmd_new_window_run(struct cmd *self, struct cmdq_item *item)
+{
 	struct args		*args = cmd_get_args(self);
 	struct client		*c = cmdq_get_client(item);
 	struct cmd_find_state	*current = cmdq_get_current(item);

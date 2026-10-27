@@ -103,6 +103,7 @@ dist_tmux_SOURCES = \
 	cmd-load-buffer.c \
 	cmd-lock-server.c \
 	cmd-move-window.c \
+	cmd-new-agent-session.c \
 	cmd-new-session.c \
 	cmd-new-window.c \
 	cmd-parse.y \
@@ -175,6 +176,7 @@ dist_tmux_SOURCES = \
 	server-client.c \
 	server-fn.c \
 	server.c \
+	agent.c \
 	session.c \
 	spawn.c \
 	status.c \

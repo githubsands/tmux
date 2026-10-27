@@ -1219,6 +1219,59 @@ command.
 .D1 Pq alias: Ic locks
 Lock all clients attached to
 .Ar target-session .
+.Tg newas
+.It Xo Ic new-agent-session
+.Op Fl AdDEPX
+.Op Fl c Ar start-directory
+.Op Fl e Ar environment
+.Op Fl F Ar format
+.Op Fl f Ar flags
+.Op Fl n Ar window-name
+.Op Fl s Ar session-name
+.Op Fl t Ar group-name
+.Op Fl x Ar width
+.Op Fl y Ar height
+.Op Ar shell-command
+.Xc
+.D1 Pq alias: Ic newas
+Create a new agent session.
+This takes the same arguments as
+.Ic new-session .
+The first window is the head agent, named
+.Ql head
+and running
+.Ar shell-command
+or
+.Ic head-agent-command .
+Every other window in the session is an agent; output from agents has
+escape sequences removed, is split into lines prefixed with
+.Ql [index:name]
+and is passed to the head agent as set by the
+.Ic agent-feed
+option.
+The
+.Ev TMUX_AGENT_FEED
+environment variable names the feed file.
+.Tg newa
+.It Xo Ic new-agent
+.Op Fl abdkPS
+.Op Fl c Ar start-directory
+.Op Fl e Ar environment
+.Op Fl F Ar format
+.Op Fl n Ar agent-name
+.Op Fl t Ar target-window
+.Op Ar shell-command
+.Xc
+.D1 Pq alias: Ic newa
+Create a new agent in an agent session.
+This takes the same arguments as
+.Ic new-window
+and runs
+.Ar shell-command
+or
+.Ic agent-command .
+.Ic new-window
+in an agent session also creates an agent.
 .Tg new
 .It Xo Ic new-session
 .Op Fl AdDEPX
@@ -3717,6 +3770,28 @@ Set action on a bell in a window when
 is on.
 The values are the same as those for
 .Ic activity-action .
+.It Ic agent-command Ar shell-command
+Command run by new agents in an agent session.
+If empty,
+.Ic default-command
+is used.
+.It Xo Ic agent-feed
+.Op Ic off | file | input | both
+.Xc
+How agent output reaches the head agent: appended to the file named by
+.Ev TMUX_AGENT_FEED
+.Pq Ic file ,
+typed into the head agent's input
+.Pq Ic input ,
+or
+.Ic both .
+The default is
+.Ic file .
+.It Ic head-agent-command Ar shell-command
+Command run by the head agent of a new agent session.
+If empty,
+.Ic default-command
+is used.
 .It Ic default-command Ar shell-command
 Set the command used for new windows (if not specified when the window is
 created) to
@@ -5169,6 +5244,7 @@ The following variables are available, where appropriate:
 .It Li "window_active_sessions_list" Ta "" Ta "List of sessions on which this window is active"
 .It Li "window_activity" Ta "" Ta "Time of window last activity"
 .It Li "window_activity_flag" Ta "" Ta "1 if window has activity"
+.It Li "window_agent" Ta "" Ta "Agent role: head, agent or empty"
 .It Li "window_bell_flag" Ta "" Ta "1 if window has bell"
 .It Li "window_bigger" Ta "" Ta "1 if window is larger than client"
 .It Li "window_cell_height" Ta "" Ta "Height of each cell in pixels"

@@ -162,6 +162,10 @@ spawn_window(struct spawn_context *sc, char **cause)
 			s->curw = sc->wl;
 		sc->wl->session = s;
 		w->latest = sc->tc;
+		if (sc->agent != WINDOW_AGENT_NONE)
+			w->agent = sc->agent;
+		else if (s->flags & SESSION_AGENTS)
+			w->agent = WINDOW_AGENT_WORKER;
 		winlink_set_window(sc->wl, w);
 	} else
 		w = NULL;
@@ -272,7 +276,14 @@ spawn_pane(struct spawn_context *sc, char **cause)
 	 * directory.
 	 */
 	if (sc->argc == 0 && (~sc->flags & SPAWN_RESPAWN)) {
-		cmd = options_get_string(s->options, "default-command");
+		if (w->agent == WINDOW_AGENT_HEAD)
+			cmd = options_get_string(s->options, "head-agent-command");
+		else if (w->agent == WINDOW_AGENT_WORKER)
+			cmd = options_get_string(s->options, "agent-command");
+		else
+			cmd = NULL;
+		if (cmd == NULL || *cmd == '\0')
+			cmd = options_get_string(s->options, "default-command");
 		if (cmd != NULL && *cmd != '\0') {
 			argc = 1;
 			argv = (char **)&cmd;

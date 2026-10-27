@@ -2148,6 +2148,15 @@ format_cb_window_active(struct format_tree *ft)
 	return (NULL);
 }
 
+/* Callback for window_agent. */
+static void *
+format_cb_window_agent(struct format_tree *ft)
+{
+	if (ft->w != NULL)
+		return (xstrdup(agent_role(ft->w)));
+	return (NULL);
+}
+
 /* Callback for window_activity_flag. */
 static void *
 format_cb_window_activity_flag(struct format_tree *ft)
@@ -2919,6 +2928,9 @@ static const struct format_table_entry format_table[] = {
 	},
 	{ "window_activity_flag", FORMAT_TABLE_STRING,
 	  format_cb_window_activity_flag
+	},
+	{ "window_agent", FORMAT_TABLE_STRING,
+	  format_cb_window_agent
 	},
 	{ "window_bell_flag", FORMAT_TABLE_STRING,
 	  format_cb_window_bell_flag

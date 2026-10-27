@@ -67,6 +67,13 @@ const struct cmd_entry cmd_has_session_entry = {
 static enum cmd_retval
 cmd_new_session_exec(struct cmd *self, struct cmdq_item *item)
 {
+	return (cmd_new_session_run(self, item, 0));
+}
+
+/* Create a new session, with a head agent if agents is set. */
+enum cmd_retval
+cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
+{
 	struct args		*args = cmd_get_args(self);
 	struct cmd_find_state	*current = cmdq_get_current(item);
 	struct cmd_find_state	*target = cmdq_get_target(item);
@@ -276,14 +283,21 @@ cmd_new_session_exec(struct cmd *self, struct cmdq_item *item)
 		av = args_next_value(av);
 	}
 	s = session_create(prefix, newname, cwd, env, oo, tiop);
+	if (agents)
+		agent_session_init(s);
 
-	/* Spawn the initial window. */
+	/* Spawn the initial window, the head agent in an agent session. */
 	sc.item = item;
 	sc.s = s;
 	if (!detached)
 		sc.tc = c;
 
 	sc.name = args_get(args, 'n');
+	if (agents) {
+		sc.agent = WINDOW_AGENT_HEAD;
+		if (sc.name == NULL)
+			sc.name = "head";
+	}
 	args_to_vector(args, &sc.argc, &sc.argv);
 
 	sc.idx = -1;

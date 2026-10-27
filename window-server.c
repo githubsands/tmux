@@ -63,7 +63,7 @@ static void		 window_server_key(struct window_mode_entry *,
 #define WINDOW_SERVER_FORMAT \
 	"#{session_name}\t#{session_attached}\t#{session_agents}\t" \
 	"#{window_index}\t#{window_name}\t#{window_agent}\t" \
-	"#{window_agent_status}\t#{window_active}"
+	"#{window_agent_status}\t#{window_active}\t#{window_agent_key}"
 
 static const struct menu_item window_server_menu_items[] = {
 	{ "Select", '\r', NULL },
@@ -499,9 +499,9 @@ window_server_build_server(struct window_server_modedata *data,
 {
 	struct window_server_itemdata	*item;
 	struct mode_tree_item		*mti, *smti = NULL;
-	char				*copy, *next, *line, *f[8], *text;
+	char				*copy, *next, *line, *f[9], *text;
 	char				*last = NULL, *shown, *copy2, *next2;
-	char				*line2, *g[8], *name;
+	char				*line2, *g[9], *name, *key = NULL;
 	u_int				 nsessions = 0, count;
 	int				 idx;
 
@@ -564,9 +564,14 @@ window_server_build_server(struct window_server_modedata *data,
 
 		idx = (int)strtonum(f[3], 0, INT_MAX, NULL);
 		if (*f[6] != '\0') {
-			xasprintf(&text, "%s%s [%s]%s", f[4],
+			if (*f[8] != '\0')
+				xasprintf(&key, " %s", f[8]);
+			xasprintf(&text, "%s%s [%s]%s%s", f[4],
 			    *f[7] == '1' ? "*" : "", f[6],
-			    strcmp(f[5], "control") == 0 ? " (control)" : "");
+			    strcmp(f[5], "control") == 0 ? " (control)" : "",
+			    key != NULL ? key : "");
+			free(key);
+			key = NULL;
 		} else
 			xasprintf(&text, "%s%s", f[4], *f[7] == '1' ? "*" : "");
 		xasprintf(&name, "%d", idx);
@@ -661,6 +666,65 @@ window_server_draw_text(struct screen_write_ctx *ctx, const char *text,
 	free(copy);
 }
 
+/* An agent's armored public key, if it has one. */
+static char *
+window_server_public_key(struct window *w)
+{
+	struct evbuffer	*evb;
+	FILE		*f;
+	char		*home, *path, buf[BUFSIZ], *out = NULL;
+	size_t		 n;
+
+	if (w->agent_id == NULL || w->agent_key == NULL)
+		return (NULL);
+	home = agent_key_home(w);
+	xasprintf(&path, "%s/public.asc", home);
+	free(home);
+	f = fopen(path, "r");
+	free(path);
+	if (f == NULL)
+		return (NULL);
+
+	evb = evbuffer_new();
+	while ((n = fread(buf, 1, sizeof buf, f)) != 0)
+		evbuffer_add(evb, buf, n);
+	fclose(f);
+	if (EVBUFFER_LENGTH(evb) != 0) {
+		evbuffer_add(evb, "", 1);
+		out = xstrdup((const char *)EVBUFFER_DATA(evb));
+	}
+	evbuffer_free(evb);
+	return (out);
+}
+
+/*
+ * Draw an agent's public key at the top of the preview and return how many
+ * lines it took, leaving one blank line under it.
+ */
+static u_int
+window_server_draw_key(struct screen_write_ctx *ctx, struct window *w,
+    u_int sx, u_int sy)
+{
+	struct screen	*s = ctx->s;
+	u_int		 cx = s->cx, cy = s->cy, i = 0;
+	char		*key, *copy, *next, *line;
+
+	if ((key = window_server_public_key(w)) == NULL)
+		return (0);
+	copy = next = key;
+	while ((line = strsep(&next, "\n")) != NULL && i < sy) {
+		if (*line == '\0' && (next == NULL || *next == '\0'))
+			break;
+		screen_write_cursormove(ctx, cx, cy + i++, 0);
+		screen_write_nputs(ctx, sx, &grid_default_cell, "%s", line);
+	}
+	free(copy);
+	if (i < sy)
+		i++;
+	screen_write_cursormove(ctx, cx, cy + i, 0);
+	return (i);
+}
+
 static void
 window_server_draw(void *modedata, void *itemdata,
     struct screen_write_ctx *ctx, u_int sx, u_int sy)
@@ -671,6 +735,7 @@ window_server_draw(void *modedata, void *itemdata,
 	struct session			*s;
 	struct winlink			*wl;
 	char				*target, *text;
+	u_int				 used;
 	const char			*args[] = { "capture-pane", "-p", "-t",
 					    NULL };
 
@@ -690,9 +755,15 @@ window_server_draw(void *modedata, void *itemdata,
 			wl = winlink_find_by_index(&s->windows, item->idx);
 		else
 			wl = s->curw;
-		if (wl != NULL)
+		if (wl == NULL)
+			return;
+		used = 0;
+		if (item->type == WINDOW_SERVER_WINDOW)
+			used = window_server_draw_key(ctx, wl->window, sx, sy);
+		if (used < sy) {
 			screen_write_preview(ctx, &wl->window->active->base, sx,
-			    sy);
+			    sy - used);
+		}
 		return;
 	}
 

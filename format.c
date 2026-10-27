@@ -2166,6 +2166,15 @@ format_cb_window_agent_status(struct format_tree *ft)
 	return (NULL);
 }
 
+/* Callback for window_agent_key. */
+static void *
+format_cb_window_agent_key(struct format_tree *ft)
+{
+	if (ft->w != NULL && ft->w->agent_key != NULL)
+		return (xstrdup(ft->w->agent_key));
+	return (NULL);
+}
+
 /* Callback for session_agents. */
 static void *
 format_cb_session_agents(struct format_tree *ft)
@@ -2955,6 +2964,9 @@ static const struct format_table_entry format_table[] = {
 	},
 	{ "window_agent", FORMAT_TABLE_STRING,
 	  format_cb_window_agent
+	},
+	{ "window_agent_key", FORMAT_TABLE_STRING,
+	  format_cb_window_agent_key
 	},
 	{ "window_agent_status", FORMAT_TABLE_STRING,
 	  format_cb_window_agent_status

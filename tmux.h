@@ -3105,6 +3105,7 @@ int		 agent_restore(struct window_pane *);
 void		 agent_save(struct session *);
 void		 agent_spawn_environ(struct window *, struct environ *);
 void		 agent_identity(struct session *, struct window *);
+char		*agent_key_home(struct window *);
 
 /* cmd-new-session.c */
 enum cmd_retval	 cmd_new_session_run(struct cmd *, struct cmdq_item *, int);

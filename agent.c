@@ -460,7 +460,7 @@ agent_restore(struct window_pane *wp)
 }
 
 /* GnuPG home directory holding an agent's keys, as an absolute path. */
-static char *
+char *
 agent_key_home(struct window *w)
 {
 	char	*copy, *path, dir[PATH_MAX];

@@ -1,4 +1,6 @@
-# custom tmux for agent sessions
+custom agent systems
+
+# custom tmux for agent systems
 
 A tmux fork where a session can run a team of CLI agents (claude, codex or
 openai). Each agent is a window running one agent process. The first window
@@ -41,3 +43,8 @@ Aliases: `newas` and `newa`.
 With `agent-feed file`, agent output is written as `[index:name] line` to the
 file named by `$TMUX_AGENT_FEED`. With `input`, it is typed into the head
 agent.
+
+
+# evals
+
+// tbd:

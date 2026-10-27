@@ -3022,6 +3022,9 @@ extern const char window_clock_table[14][5][5];
 /* window-client.c */
 extern const struct window_mode window_client_mode;
 
+/* window-server.c */
+extern const struct window_mode window_server_mode;
+
 /* window-copy.c */
 extern const struct window_mode window_copy_mode;
 extern const struct window_mode window_view_mode;

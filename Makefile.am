@@ -78,6 +78,7 @@ dist_tmux_SOURCES = \
 	cmd-bind-key.c \
 	cmd-break-pane.c \
 	cmd-capture-pane.c \
+	cmd-choose-server.c \
 	cmd-choose-tree.c \
 	cmd-command-prompt.c \
 	cmd-confirm-before.c \
@@ -195,6 +196,7 @@ dist_tmux_SOURCES = \
 	window-clock.c \
 	window-copy.c \
 	window-customize.c \
+	window-server.c \
 	window-tree.c \
 	window.c \
 	xmalloc.c \

@@ -357,6 +357,8 @@ Briefly display pane indexes.
 Force redraw of the attached client.
 .It s
 Select a new session for the attached client interactively.
+.It S
+Select a different server for the attached client interactively.
 .It t
 Show the time.
 .It w
@@ -2159,6 +2161,29 @@ a format for each shortcut key; both are evaluated once for each line.
 .Fl N
 starts without the preview.
 This command works only if at least one client is attached.
+.It Xo Ic choose-server
+.Op Fl NZ
+.Op Fl t Ar target-pane
+.Xc
+Put a pane into server mode, where every
+.Nm
+server with a socket in the same directory as the current server may be chosen
+interactively.
+Each server is shown with the binary running it and its sessions and windows
+underneath; windows in an agent session are shown with their agent status.
+The other servers are listed by running their own binary, so a stock
+.Nm
+server is shown as well.
+The preview shows the selected window.
+.Pp
+Choosing a session or window on the current server switches the client to it.
+Choosing an item on another server replaces the client with a new client
+attached to that server; if that fails, the new client attaches back to the
+current server.
+.Fl N
+starts without the preview and
+.Fl Z
+zooms the pane.
 .It Xo
 .Ic choose-tree
 .Op Fl GNrswZ

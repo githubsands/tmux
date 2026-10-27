@@ -24,6 +24,20 @@ If `tmux -V` still shows the stock version in an old shell, run `rehash`.
 
 Aliases: `newas` and `newa`.
 
+## Servers
+
+    tmux choose-server                          # or prefix + S
+
+Shows every tmux server with a socket in the socket directory (this fork's
+`agents`, a stock `default` and any `-L` servers), with their sessions and
+windows underneath. Agent sessions list their agents with their status
+(`running`, `idle` or `exited`). The preview shows the selected window, even
+on another server.
+
+Enter on a session or window of another server replaces the client with one
+attached to that server, using the binary that runs it, so a stock tmux
+server works too. If that fails the client comes back to the current server.
+
 ## Options
 
 | option               | values                         | default  |

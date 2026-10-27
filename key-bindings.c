@@ -393,6 +393,7 @@ key_bindings_init(void)
 		"bind -N 'Display pane numbers' q { display-panes }",
 		"bind -N 'Redraw the current client' r { refresh-client }",
 		"bind -N 'Choose a session from a list' s { choose-tree -Zs }",
+		"bind -N 'Choose a server from a list' S { choose-server }",
 		"bind -N 'Show a clock' t { clock-mode }",
 		"bind -N 'Choose a window from a list' w { choose-tree -Zw }",
 		"bind -N 'Kill the active pane' x { confirm-before -p\"kill-pane #P? (y/n)\" kill-pane }",

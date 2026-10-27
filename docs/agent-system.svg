@@ -1,179 +1,171 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1620" height="1010" viewBox="0 0 1620 1010" font-family="Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1620" height="1090" viewBox="0 0 1620 1090" font-family="Helvetica, Arial, sans-serif">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#4a5a78"/>
     </marker>
   </defs>
+  <rect width="1620" height="1090" fill="#ffffff"/>
 
-  <rect width="1620" height="1010" fill="#ffffff"/>
-
-  <!-- server -->
-  <rect x="20" y="20" width="920" height="600" rx="14" fill="#f7f9fc" stroke="#4a5a78" stroke-width="2"/>
-  <text x="40" y="46" font-size="16" font-weight="bold" fill="#1c2740">tmux server 1</text>
+  <!-- tmux server 1 -->
+  <rect x="20" y="20" width="920" height="680" rx="14" fill="#f7f9fc" stroke="#4a5a78" stroke-width="2"/>
+  <text x="40" y="46" font-size="16" fill="#1c2740" font-weight="bold">tmux server 1</text>
   <text x="164" y="46" font-size="14" fill="#4a5a78">socket: agents ($TMUX_TMPDIR/tmux-UID/agents, or $TMUX_AGENTS)</text>
-
-  <!-- session -->
-  <rect x="40" y="62" width="880" height="488" rx="12" fill="#ffffff" stroke="#8592ad" stroke-width="1.5"/>
-  <text x="60" y="88" font-size="15" font-weight="bold" fill="#1c2740">session: research</text>
+  <rect x="40" y="62" width="880" height="568" rx="12" fill="#ffffff" stroke="#8592ad" stroke-width="1.5"/>
+  <text x="60" y="88" font-size="15" fill="#1c2740" font-weight="bold">session: research</text>
   <text x="204" y="88" font-size="13" fill="#5b6780">tmux new-agent-session -s research -N 3</text>
-
-  <!-- operator -->
   <rect x="70" y="110" width="240" height="80" rx="10" fill="#e8f1ff" stroke="#3b6fd8" stroke-width="2"/>
-  <text x="190" y="138" font-size="16" font-weight="bold" fill="#0b2a66" text-anchor="middle">0: operator</text>
-  <text x="190" y="162" font-size="13" fill="#0b2a66" text-anchor="middle">your shell</text>
-
-  <!-- control-agent -->
-  <rect x="560" y="110" width="330" height="80" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
-  <text x="725" y="138" font-size="16" font-weight="bold" fill="#3b0a66" text-anchor="middle">1: control-agent</text>
-  <text x="725" y="162" font-size="13" fill="#3b0a66" text-anchor="middle">head agent - claude / codex / openai</text>
-
-  <!-- multiplexer -->
-  <polygon points="320,300 352,262 608,262 640,300 608,338 352,338" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
-  <text x="480" y="295" font-size="15" font-weight="bold" fill="#222222" text-anchor="middle">multiplexer</text>
-  <text x="480" y="317" font-size="12" fill="#222222" text-anchor="middle">strip escapes, tag lines [index:name]</text>
-
-  <!-- feed file -->
-  <path d="M710,272 a85,12 0 0,0 170,0 v62 a85,12 0 0,1 -170,0 z" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
-  <ellipse cx="795" cy="272" rx="85" ry="12" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
-  <text x="795" y="308" font-size="13" font-weight="bold" fill="#222222" text-anchor="middle">$TMUX_AGENT_FEED</text>
-  <text x="795" y="327" font-size="12" fill="#222222" text-anchor="middle">SOCKET-agents-ID.log</text>
-
-  <!-- record file -->
-  <path d="M85,272 a105,12 0 0,0 210,0 v62 a105,12 0 0,1 -210,0 z" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
-  <ellipse cx="190" cy="272" rx="105" ry="12" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
-  <text x="190" y="308" font-size="13" font-weight="bold" fill="#222222" text-anchor="middle">$TMUX_AGENT_RECORD</text>
-  <text x="190" y="327" font-size="12" fill="#222222" text-anchor="middle">conversation id per agent</text>
-  <path d="M190,348 L190,426" stroke="#4a5a78" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#arrow)"/>
-  <text x="82" y="392" font-size="12" fill="#4a5a78">claude --resume</text>
-  <text x="82" y="408" font-size="12" fill="#4a5a78">on exit</text>
-
-  <!-- agents -->
-  <rect x="70" y="430" width="240" height="80" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
-  <text x="190" y="458" font-size="16" font-weight="bold" fill="#0d3d20" text-anchor="middle">2: agent-1</text>
-  <text x="190" y="482" font-size="13" fill="#0d3d20" text-anchor="middle">running</text>
-
-  <rect x="360" y="430" width="240" height="80" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
-  <text x="480" y="458" font-size="16" font-weight="bold" fill="#5a3d00" text-anchor="middle">3: agent-2</text>
-  <text x="480" y="482" font-size="13" fill="#5a3d00" text-anchor="middle">idle</text>
-
-  <rect x="650" y="430" width="240" height="80" rx="10" fill="#fde8e8" stroke="#c94040" stroke-width="2"/>
-  <text x="770" y="458" font-size="16" font-weight="bold" fill="#5c1010" text-anchor="middle">4: agent-3</text>
-  <text x="770" y="482" font-size="13" fill="#5c1010" text-anchor="middle">exited</text>
-
-  <!-- pgp identities -->
+  <text x="190" y="148" font-size="16" fill="#0b2a66" font-weight="bold" text-anchor="middle">0: operator</text>
+  <text x="190" y="168" font-size="13" fill="#0b2a66" text-anchor="middle">your shell</text>
   <rect x="94" y="181" width="193" height="18" rx="9" fill="#ffffff" stroke="#3b6fd8" stroke-width="1.5"/>
-  <text x="190" y="194" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#0b2a66" text-anchor="middle">operator key 3F2A&#8230;91C4 (you)</text>
-  <rect x="625" y="181" width="200" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
-  <text x="725" y="194" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#3b0a66" text-anchor="middle">pgp C8F6&#8230;3268 &#183; signed by you</text>
-  <rect x="90" y="501" width="200" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
-  <text x="190" y="514" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#0d3d20" text-anchor="middle">pgp 8776&#8230;CF7E &#183; signed by you</text>
-  <rect x="380" y="501" width="200" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
-  <text x="480" y="514" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#5a3d00" text-anchor="middle">pgp 6B77&#8230;8552 &#183; signed by you</text>
-  <rect x="670" y="501" width="200" height="18" rx="9" fill="#ffffff" stroke="#c94040" stroke-width="1.5"/>
-  <text x="770" y="514" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#5c1010" text-anchor="middle">pgp 1D4E&#8230;A09B &#183; signed by you</text>
-
-  <!-- arrows: agents to multiplexer -->
-  <g stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)">
-    <path d="M190,430 L410,342"/>
-    <path d="M480,430 L480,342"/>
-    <path d="M770,430 L550,342"/>
-    <!-- multiplexer to control-agent (input) -->
-    <path d="M540,262 L636,203"/>
-    <!-- multiplexer to feed file -->
-    <path d="M640,300 L706,300"/>
-  </g>
-  <!-- feed file read by control-agent -->
-  <path d="M795,260 L795,203" stroke="#4a5a78" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#arrow)"/>
-
-  <g font-size="12" fill="#4a5a78">
-    <text x="490" y="395">output</text>
-    <text x="508" y="222">agent-feed input</text>
-    <text x="646" y="292">file</text>
-    <text x="803" y="232">reads</text>
-  </g>
-
-  <!-- other sessions -->
-  <rect x="40" y="564" width="880" height="40" rx="10" fill="#fafafa" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="480" y="589" font-size="13" fill="#777777" text-anchor="middle">other agent sessions on the same server</text>
+  <text x="190" y="194" font-size="10.5" fill="#0b2a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">operator key 0386&#8230;FC52 (you)</text>
+  <rect x="560" y="110" width="330" height="124" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
+  <text x="725" y="132" font-size="16" fill="#3b0a66" font-weight="bold" text-anchor="middle">1: control-agent</text>
+  <text x="725" y="149" font-size="13" fill="#3b0a66" text-anchor="middle">head agent - claude / codex / openai</text>
+  <rect x="570" y="159" width="310" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#8a3fd1" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="725.0" y="174.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <text x="725.0" y="185.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq+hYJKwYBBAHaRw8BAQdAx4ZXJB2UIOZm5alhUjM4Z7uk…</text>
+  <text x="725.0" y="197.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">gpg/7k60SXJlc2VhcmNoL2NvbnRyb2wtYWdlbnQgPDc2ZTFhMmNm…</text>
+  <text x="725.0" y="208.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <rect x="625" y="225" width="200" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
+  <text x="725" y="238" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp B25E&#8230;1FEF &#183; signed by you</text>
+  <polygon points="320,340 352,302 608,302 640,340 608,378 352,378" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
+  <text x="480" y="335" font-size="15" fill="#222222" font-weight="bold" text-anchor="middle">multiplexer</text>
+  <text x="480" y="357" font-size="12" fill="#222222" text-anchor="middle">strip escapes, tag lines [index:name]</text>
+  <path d="M710,312 a85,12 0 0,0 170,0 v62 a85,12 0 0,1 -170,0 z" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
+  <ellipse cx="795" cy="312" rx="85" ry="12" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
+  <text x="795" y="348" font-size="13" fill="#222222" font-weight="bold" text-anchor="middle">$TMUX_AGENT_FEED</text>
+  <text x="795" y="367" font-size="12" fill="#222222" text-anchor="middle">SOCKET-agents-ID.log</text>
+  <path d="M85,312 a105,12 0 0,0 210,0 v62 a105,12 0 0,1 -210,0 z" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
+  <ellipse cx="190" cy="312" rx="105" ry="12" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
+  <text x="190" y="348" font-size="13" fill="#222222" font-weight="bold" text-anchor="middle">$TMUX_AGENT_RECORD</text>
+  <text x="190" y="367" font-size="12" fill="#222222" text-anchor="middle">conversation id per agent</text>
+  <rect x="70" y="450" width="240" height="124" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
+  <text x="190" y="472" font-size="16" fill="#0d3d20" font-weight="bold" text-anchor="middle">2: agent-1</text>
+  <text x="190" y="489" font-size="13" fill="#0d3d20" text-anchor="middle">running</text>
+  <rect x="80" y="499" width="220" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#2f9e5a" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="190.0" y="514.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <text x="190.0" y="525.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq+xYJKwYBBAHaRw8BAQdA5r888Tco…</text>
+  <text x="190.0" y="537.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">o2aN/s20Q3Jlc2VhcmNoL2FnZW50LTEgPDU5…</text>
+  <text x="190.0" y="548.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <rect x="90" y="565" width="200" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
+  <text x="190" y="578" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp F4A6&#8230;9501 &#183; signed by you</text>
+  <rect x="360" y="450" width="240" height="124" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
+  <text x="480" y="472" font-size="16" fill="#5a3d00" font-weight="bold" text-anchor="middle">3: agent-2</text>
+  <text x="480" y="489" font-size="13" fill="#5a3d00" text-anchor="middle">idle</text>
+  <rect x="370" y="499" width="220" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#d19a1f" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="480.0" y="514.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <text x="480.0" y="525.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq+xYJKwYBBAHaRw8BAQdAGeiZBSBz…</text>
+  <text x="480.0" y="537.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">NJg11le0Q3Jlc2VhcmNoL2FnZW50LTIgPDBk…</text>
+  <text x="480.0" y="548.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <rect x="380" y="565" width="200" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
+  <text x="480" y="578" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp 968D&#8230;4EC6 &#183; signed by you</text>
+  <rect x="650" y="450" width="240" height="124" rx="10" fill="#fde8e8" stroke="#c94040" stroke-width="2"/>
+  <text x="770" y="472" font-size="16" fill="#5c1010" font-weight="bold" text-anchor="middle">4: agent-3</text>
+  <text x="770" y="489" font-size="13" fill="#5c1010" text-anchor="middle">exited</text>
+  <rect x="660" y="499" width="220" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#c94040" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="770.0" y="514.0" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <text x="770.0" y="525.5" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/BYJKwYBBAHaRw8BAQdAnZq1Ld8x…</text>
+  <text x="770.0" y="537.0" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">pVfovTO0Q3Jlc2VhcmNoL2FnZW50LTMgPDQ3…</text>
+  <text x="770.0" y="548.5" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <rect x="670" y="565" width="200" height="18" rx="9" fill="#ffffff" stroke="#c94040" stroke-width="1.5"/>
+  <text x="770" y="578" font-size="10.5" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp 059B&#8230;1D53 &#183; signed by you</text>
+  <path d="M190,450 L410,382" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M480,450 L480,382" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M770,450 L550,382" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M540,302 L636,248" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M640,340 L706,340" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M795,300 L795,248" stroke="#4a5a78" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <path d="M190,388 L190,446" stroke="#4a5a78" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <text x="82" y="412" font-size="12" fill="#4a5a78">claude --resume</text>
+  <text x="82" y="428" font-size="12" fill="#4a5a78">on exit</text>
+  <text x="490" y="422" font-size="12" fill="#4a5a78">output</text>
+  <text x="468" y="270" font-size="12" fill="#4a5a78">agent-feed input</text>
+  <text x="646" y="332" font-size="12" fill="#4a5a78">file</text>
+  <text x="803" y="280" font-size="12" fill="#4a5a78">reads</text>
+  <rect x="40" y="644" width="880" height="40" rx="10" fill="#fafafa" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="480" y="669" font-size="13" fill="#777777" text-anchor="middle">other agent sessions on the same server</text>
 
   <!-- tmux server 2 -->
-  <rect x="980" y="20" width="300" height="600" rx="14" fill="#f7f9fc" stroke="#4a5a78" stroke-width="2"/>
-  <text x="1000" y="46" font-size="16" font-weight="bold" fill="#1c2740">tmux server 2</text>
+  <rect x="980" y="20" width="300" height="680" rx="14" fill="#f7f9fc" stroke="#4a5a78" stroke-width="2"/>
+  <text x="1000" y="46" font-size="16" fill="#1c2740" font-weight="bold">tmux server 2</text>
   <text x="1000" y="66" font-size="13" fill="#4a5a78">socket: work (tmux -L work)</text>
-  <rect x="1000" y="82" width="260" height="468" rx="12" fill="#ffffff" stroke="#8592ad" stroke-width="1.5"/>
-  <text x="1020" y="108" font-size="15" font-weight="bold" fill="#1c2740">session: infra</text>
-  <rect x="1020" y="126" width="220" height="70" rx="10" fill="#e8f1ff" stroke="#3b6fd8" stroke-width="2"/>
-  <text x="1130" y="152" font-size="15" font-weight="bold" fill="#0b2a66" text-anchor="middle">0: operator</text>
-  <text x="1130" y="172" font-size="12" fill="#0b2a66" text-anchor="middle">shell</text>
-  <rect x="1020" y="212" width="220" height="70" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
-  <text x="1130" y="238" font-size="15" font-weight="bold" fill="#3b0a66" text-anchor="middle">1: control-agent</text>
-  <text x="1130" y="258" font-size="12" fill="#3b0a66" text-anchor="middle">head agent</text>
-  <rect x="1020" y="298" width="220" height="70" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
-  <text x="1130" y="324" font-size="15" font-weight="bold" fill="#0d3d20" text-anchor="middle">2: agent-1</text>
-  <text x="1130" y="344" font-size="12" fill="#0d3d20" text-anchor="middle">running</text>
-  <rect x="1020" y="384" width="220" height="70" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
-  <text x="1130" y="410" font-size="15" font-weight="bold" fill="#5a3d00" text-anchor="middle">3: agent-2</text>
-  <text x="1130" y="430" font-size="12" fill="#5a3d00" text-anchor="middle">idle</text>
-  <rect x="1000" y="564" width="260" height="40" rx="10" fill="#fafafa" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="1130" y="589" font-size="13" fill="#777777" text-anchor="middle">other agent sessions</text>
-
-  <!-- server 2 pgp identities -->
-  <rect x="1034" y="187" width="193" height="18" rx="9" fill="#ffffff" stroke="#3b6fd8" stroke-width="1.5"/>
-  <text x="1130" y="200" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#0b2a66" text-anchor="middle">operator key 3F2A&#8230;91C4 (you)</text>
-  <rect x="1030" y="273" width="200" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
-  <text x="1130" y="286" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#3b0a66" text-anchor="middle">pgp 5A1C&#8230;77E2 &#183; signed by you</text>
-  <rect x="1030" y="359" width="200" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
-  <text x="1130" y="372" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#0d3d20" text-anchor="middle">pgp E90B&#8230;4C13 &#183; signed by you</text>
-  <rect x="1030" y="445" width="200" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
-  <text x="1130" y="458" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#5a3d00" text-anchor="middle">pgp 2F6D&#8230;B8A0 &#183; signed by you</text>
+  <rect x="1000" y="82" width="260" height="548" rx="12" fill="#ffffff" stroke="#8592ad" stroke-width="1.5"/>
+  <text x="1020" y="108" font-size="15" fill="#1c2740" font-weight="bold">session: infra</text>
+  <rect x="1020" y="122" width="220" height="70" rx="10" fill="#e8f1ff" stroke="#3b6fd8" stroke-width="2"/>
+  <text x="1130" y="155" font-size="15" fill="#0b2a66" font-weight="bold" text-anchor="middle">0: operator</text>
+  <text x="1130" y="175" font-size="12" fill="#0b2a66" text-anchor="middle">shell</text>
+  <rect x="1034" y="183" width="193" height="18" rx="9" fill="#ffffff" stroke="#3b6fd8" stroke-width="1.5"/>
+  <text x="1130" y="196" font-size="10.5" fill="#0b2a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">operator key 0386&#8230;FC52 (you)</text>
+  <rect x="1020" y="210" width="220" height="120" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
+  <text x="1130" y="232" font-size="15" fill="#3b0a66" font-weight="bold" text-anchor="middle">1: control-agent</text>
+  <text x="1130" y="248" font-size="12" fill="#3b0a66" text-anchor="middle">head agent</text>
+  <rect x="1030" y="258" width="200" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#8a3fd1" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1130.0" y="273.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <text x="1130.0" y="284.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/BYJKwYBBAHaRw8BAQdAaeaV…</text>
+  <text x="1130.0" y="296.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">jFlm0uW0RmluZnJhL2NvbnRyb2wtYWdl…</text>
+  <text x="1130.0" y="307.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <rect x="1030" y="321" width="200" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
+  <text x="1130" y="334" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp E573&#8230;704B &#183; signed by you</text>
+  <rect x="1020" y="344" width="220" height="120" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
+  <text x="1130" y="366" font-size="15" fill="#0d3d20" font-weight="bold" text-anchor="middle">2: agent-1</text>
+  <text x="1130" y="382" font-size="12" fill="#0d3d20" text-anchor="middle">running</text>
+  <rect x="1030" y="392" width="200" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#2f9e5a" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1130.0" y="407.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <text x="1130.0" y="418.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/RYJKwYBBAHaRw8BAQdAxZTq…</text>
+  <text x="1130.0" y="430.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">rPUj03S0QGluZnJhL2FnZW50LTEgPGFj…</text>
+  <text x="1130.0" y="441.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <rect x="1030" y="455" width="200" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
+  <text x="1130" y="468" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp E25A&#8230;1C9C &#183; signed by you</text>
+  <rect x="1020" y="478" width="220" height="120" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
+  <text x="1130" y="500" font-size="15" fill="#5a3d00" font-weight="bold" text-anchor="middle">3: agent-2</text>
+  <text x="1130" y="516" font-size="12" fill="#5a3d00" text-anchor="middle">idle</text>
+  <rect x="1030" y="526" width="200" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#d19a1f" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1130.0" y="541.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <text x="1130.0" y="552.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/hYJKwYBBAHaRw8BAQdAu55y…</text>
+  <text x="1130.0" y="564.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">bcEb0gm0QGluZnJhL2FnZW50LTIgPGFi…</text>
+  <text x="1130.0" y="575.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
+  <rect x="1030" y="589" width="200" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
+  <text x="1130" y="602" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp 48F3&#8230;3BDA &#183; signed by you</text>
+  <rect x="1000" y="644" width="260" height="40" rx="10" fill="#fafafa" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="1130" y="669" font-size="13" fill="#777777" text-anchor="middle">other agent sessions</text>
 
   <!-- tmux server 3 -->
-  <rect x="1300" y="20" width="300" height="600" rx="14" fill="#fafafa" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="1320" y="46" font-size="16" font-weight="bold" fill="#777777">tmux server 3</text>
+  <rect x="1300" y="20" width="300" height="680" rx="14" fill="#fafafa" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="1320" y="46" font-size="16" fill="#777777" font-weight="bold">tmux server 3</text>
   <text x="1320" y="66" font-size="13" fill="#888888">socket: default (stock tmux)</text>
-  <rect x="1320" y="82" width="260" height="468" rx="12" fill="#ffffff" stroke="#bbbbbb" stroke-width="1.5" stroke-dasharray="5 4"/>
-  <text x="1340" y="108" font-size="15" font-weight="bold" fill="#777777">session: main</text>
+  <rect x="1320" y="82" width="260" height="548" rx="12" fill="#ffffff" stroke="#bbbbbb" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="1340" y="108" font-size="15" fill="#777777" font-weight="bold">session: main</text>
   <rect x="1340" y="126" width="220" height="70" rx="10" fill="#f4f4f4" stroke="#aaaaaa" stroke-width="2"/>
-  <text x="1450" y="157" font-size="15" font-weight="bold" fill="#777777" text-anchor="middle">0: zsh</text>
-  <text x="1450" y="177" font-size="12" fill="#777777" text-anchor="middle">plain window</text>
+  <text x="1450" y="159" font-size="15" fill="#777777" font-weight="bold" text-anchor="middle">0: zsh</text>
+  <text x="1450" y="179" font-size="12" fill="#777777" text-anchor="middle">plain window</text>
   <rect x="1340" y="212" width="220" height="70" rx="10" fill="#f4f4f4" stroke="#aaaaaa" stroke-width="2"/>
-  <text x="1450" y="243" font-size="15" font-weight="bold" fill="#777777" text-anchor="middle">1: vim</text>
-  <text x="1450" y="263" font-size="12" fill="#777777" text-anchor="middle">plain window</text>
-  <text x="1450" y="330" font-size="13" fill="#888888" text-anchor="middle">no agents, never</text>
+  <text x="1450" y="245" font-size="15" fill="#777777" font-weight="bold" text-anchor="middle">1: vim</text>
+  <text x="1450" y="265" font-size="12" fill="#777777" text-anchor="middle">plain window</text>
+  <text x="1450" y="330" font-size="13" fill="#888888" text-anchor="middle">no agents or keys, never</text>
   <text x="1450" y="348" font-size="13" fill="#888888" text-anchor="middle">contacted by this fork</text>
 
   <!-- you, at a laptop -->
-  <g stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)">
-    <path d="M720,698 L484,626"/>
-    <path d="M880,698 L1126,626"/>
-  </g>
-  <path d="M930,698 L1446,626" stroke="#aaaaaa" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#arrow)"/>
-  <text x="810" y="662" font-size="13" fill="#4a5a78" text-anchor="middle">tmux attach / choose-server</text>
-
-  <!-- laptop screen -->
-  <rect x="640" y="700" width="340" height="190" rx="12" fill="#2b2f3a" stroke="#1c2027" stroke-width="2"/>
-  <rect x="654" y="714" width="312" height="162" rx="4" fill="#11151c"/>
-  <g font-family="Menlo, Monaco, monospace" font-size="12" xml:space="preserve" style="white-space: pre">
-    <text x="666" y="736" fill="#9fb3c8">$&#160;tmux&#160;choose-server</text>
-    <text x="666" y="762" fill="#7ee2a8">&gt;&#160;agents&#160;&#160;&#160;research&#160;&#160;5&#160;agents</text>
-    <text x="666" y="782" fill="#d6dde8">&#160;&#160;work&#160;&#160;&#160;&#160;&#160;infra&#160;&#160;&#160;&#160;&#160;4&#160;agents</text>
-    <text x="666" y="802" fill="#8a93a3">&#160;&#160;default&#160;&#160;main&#160;&#160;&#160;&#160;&#160;&#160;2&#160;windows</text>
-    <text x="666" y="832" fill="#9fb3c8">[research]&#160;0:operator*&#160;1:control-agent</text>
-    <text x="666" y="852" fill="#9fb3c8">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2:agent-1&#160;3:agent-2&#160;4:agent-3</text>
-  </g>
-  <!-- laptop base -->
-  <polygon points="612,890 1008,890 1036,912 584,912" fill="#c9ced8" stroke="#8a93a3" stroke-width="2"/>
-  <rect x="770" y="890" width="80" height="6" rx="3" fill="#a9b0bd"/>
-
-  <!-- person -->
-  <circle cx="520" cy="780" r="24" fill="#e8f1ff" stroke="#3b6fd8" stroke-width="2"/>
-  <path d="M472,870 Q472,816 520,816 Q568,816 568,870 Z" fill="#e8f1ff" stroke="#3b6fd8" stroke-width="2"/>
-  <path d="M560,846 Q590,880 618,898" stroke="#3b6fd8" stroke-width="2" fill="none"/>
-  <text x="520" y="896" font-size="15" font-weight="bold" fill="#0b2a66" text-anchor="middle">you</text>
-  <text x="520" y="914" font-size="12" fill="#0b2a66" text-anchor="middle">the operator</text>
-  <rect x="366" y="926" width="308" height="18" rx="9" fill="#ffffff" stroke="#3b6fd8" stroke-width="1.5"/>
-  <text x="520" y="939" font-family="Menlo, Monaco, monospace" font-size="10.5" fill="#0b2a66" text-anchor="middle">operator key 3F2A&#8230;91C4 &#183; signs every agent key</text>
-
-  <text x="810" y="972" font-size="13" fill="#4a5a78" text-anchor="middle">every agent holds its own pgp private key (its own GNUPGHOME); the operator signs each public key and agents trust the operator</text>
-  <text x="810" y="994" font-size="13" fill="#4a5a78" text-anchor="middle">each server is separate; choose-server (prefix + S) lists them all and attaches to any of them</text>
+  <path d="M720,778 L484,706" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M880,778 L1126,706" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M930,778 L1446,706" stroke="#aaaaaa" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <text x="810" y="742" font-size="13" fill="#4a5a78" text-anchor="middle">tmux attach / choose-server</text>
+  <rect x="640" y="780" width="340" height="190" rx="12" fill="#2b2f3a" stroke="#1c2027" stroke-width="2"/>
+  <rect x="654" y="794" width="312" height="162" rx="4" fill="#11151c"/>
+  <text x="666" y="816" font-size="12" fill="#9fb3c8" font-family="Menlo, Monaco, monospace">$&#160;tmux&#160;choose-server</text>
+  <text x="666" y="842" font-size="12" fill="#7ee2a8" font-family="Menlo, Monaco, monospace">&gt;&#160;agents&#160;&#160;&#160;research&#160;&#160;5&#160;agents</text>
+  <text x="666" y="862" font-size="12" fill="#d6dde8" font-family="Menlo, Monaco, monospace">&#160;&#160;work&#160;&#160;&#160;&#160;&#160;infra&#160;&#160;&#160;&#160;&#160;4&#160;agents</text>
+  <text x="666" y="882" font-size="12" fill="#8a93a3" font-family="Menlo, Monaco, monospace">&#160;&#160;default&#160;&#160;main&#160;&#160;&#160;&#160;&#160;&#160;2&#160;windows</text>
+  <text x="666" y="912" font-size="12" fill="#9fb3c8" font-family="Menlo, Monaco, monospace">[research]&#160;0:operator*&#160;1:control-agent</text>
+  <text x="666" y="932" font-size="12" fill="#9fb3c8" font-family="Menlo, Monaco, monospace">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2:agent-1&#160;3:agent-2&#160;4:agent-3</text>
+  <polygon points="612,970 1008,970 1036,992 584,992" fill="#c9ced8" stroke="#8a93a3" stroke-width="2"/>
+  <rect x="770" y="970" width="80" height="6" rx="3" fill="#a9b0bd"/>
+  <circle cx="520" cy="860" r="24" fill="#e8f1ff" stroke="#3b6fd8" stroke-width="2"/>
+  <path d="M472,950 Q472,896 520,896 Q568,896 568,950 Z" fill="#e8f1ff" stroke="#3b6fd8" stroke-width="2"/>
+  <path d="M560,926 Q590,960 618,978" stroke="#3b6fd8" stroke-width="2" fill="none"/>
+  <text x="520" y="976" font-size="15" fill="#0b2a66" font-weight="bold" text-anchor="middle">you</text>
+  <text x="520" y="994" font-size="12" fill="#0b2a66" text-anchor="middle">the operator</text>
+  <rect x="366" y="1006" width="308" height="18" rx="9" fill="#ffffff" stroke="#3b6fd8" stroke-width="1.5"/>
+  <text x="520" y="1019" font-size="10.5" fill="#0b2a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">operator key 0386&#8230;FC52 &#183; signs every agent key</text>
+  <text x="810" y="1052" font-size="13" fill="#4a5a78" text-anchor="middle">every agent holds its own pgp private key (its own GNUPGHOME); the operator signs each public key and agents trust the operator</text>
+  <text x="810" y="1074" font-size="13" fill="#4a5a78" text-anchor="middle">each server is separate; choose-server (prefix + S) lists them all and attaches to any of them</text>
 </svg>

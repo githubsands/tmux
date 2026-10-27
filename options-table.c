@@ -438,6 +438,16 @@ const struct options_table_entry options_table[] = {
 		  "the agent option is used."
 	},
 
+	{ .name = "agent-count",
+	  .type = OPTIONS_TABLE_NUMBER,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .minimum = 0,
+	  .maximum = AGENT_COUNT_MAX,
+	  .default_num = 0,
+	  .text = "Number of agents, not including the head agent, to start "
+		  "with a new agent session."
+	},
+
 	{ .name = "agent-feed",
 	  .type = OPTIONS_TABLE_CHOICE,
 	  .scope = OPTIONS_TABLE_SESSION,

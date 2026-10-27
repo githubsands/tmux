@@ -3076,6 +3076,7 @@ void	control_notify_session_closed(struct session *);
 void	control_notify_session_window_changed(struct session *);
 
 /* agent.c */
+#define AGENT_COUNT_MAX 64
 void		 agent_session_init(struct session *);
 void		 agent_session_free(struct session *);
 struct window_pane *agent_head(struct session *);

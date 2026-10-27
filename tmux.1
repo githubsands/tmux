@@ -1228,6 +1228,7 @@ Lock all clients attached to
 .Op Fl F Ar format
 .Op Fl f Ar flags
 .Op Fl n Ar window-name
+.Op Fl N Ar agents
 .Op Fl s Ar session-name
 .Op Fl t Ar group-name
 .Op Fl x Ar width
@@ -1248,6 +1249,13 @@ or
 sets the
 .Ic agent
 option for the session.
+.Fl N
+sets the
+.Ic agent-count
+option for the session; that many agents are started after the head
+agent, so the session has
+.Ar agents
+plus one windows.
 Every other window in the session is an agent; output from agents has
 escape sequences removed, is split into lines prefixed with
 .Ql [index:name]
@@ -3792,6 +3800,15 @@ Command run by new agents in an agent session.
 If empty, the
 .Ic agent
 option is used.
+.It Ic agent-count Ar number
+Number of agents, not including the head agent, started with a new agent
+session.
+Each runs
+.Ic agent-command
+or the
+.Ic agent
+option.
+The default is 0 and the maximum is 64.
 .It Xo Ic agent-feed
 .Op Ic off | file | input | both
 .Xc

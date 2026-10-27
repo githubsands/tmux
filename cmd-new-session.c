@@ -88,8 +88,9 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 	char			*name, *prefix = NULL;
 	int			 detached, already_attached, is_control = 0;
 	int			 agent = -1;
-	u_int			 sx, sy, dsx, dsy, count = args_count(args);
-	struct spawn_context	 sc = { 0 };
+	long long		 nagents = -1;
+	u_int			 sx, sy, dsx, dsy, count = args_count(args), i;
+	struct spawn_context	 sc = { 0 }, asc;
 	enum cmd_retval		 retval;
 	struct cmd_find_state    fs;
 	struct args_value	*av;
@@ -112,6 +113,14 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 		    global_s_options, "agent")), args_get(args, 'a'), &cause);
 		if (agent < 0) {
 			cmdq_error(item, "invalid agent: %s", args_get(args, 'a'));
+			free(cause);
+			return (CMD_RETURN_ERROR);
+		}
+	}
+	if (agents && args_has(args, 'N')) {
+		nagents = args_strtonum(args, 'N', 0, AGENT_COUNT_MAX, &cause);
+		if (cause != NULL) {
+			cmdq_error(item, "agents %s", cause);
 			free(cause);
 			return (CMD_RETURN_ERROR);
 		}
@@ -287,6 +296,8 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 	}
 	if (agent != -1)
 		options_set_number(oo, "agent", agent);
+	if (nagents != -1)
+		options_set_number(oo, "agent-count", nagents);
 	env = environ_create();
 	if (c != NULL && !args_has(args, 'E'))
 		environ_update(global_s_options, c->environ, env);
@@ -323,6 +334,24 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 		cmdq_error(item, "create window failed: %s", cause);
 		free(cause);
 		goto fail;
+	}
+
+	/* Spawn the other agents after the head, leaving the head current. */
+	nagents = agents ? options_get_number(s->options, "agent-count") : 0;
+	for (i = 0; i < nagents; i++) {
+		memset(&asc, 0, sizeof asc);
+		asc.item = item;
+		asc.s = s;
+		asc.agent = WINDOW_AGENT_WORKER;
+		asc.idx = -1;
+		asc.cwd = args_get(args, 'c');
+		asc.flags = SPAWN_DETACHED;
+		if (spawn_window(&asc, &cause) == NULL) {
+			session_destroy(s, 0, __func__);
+			cmdq_error(item, "create agent failed: %s", cause);
+			free(cause);
+			goto fail;
+		}
 	}
 
 	/*

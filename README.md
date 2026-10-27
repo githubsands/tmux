@@ -47,6 +47,28 @@ Enter on a session or window of another server replaces the client with one
 attached to that server, using the binary that runs it, so a stock tmux
 server works too. If that fails the client comes back to the current server.
 
+## Cloud servers
+
+    tmux provision-server -p gcp web-1                     # GCP, us-central1-a, e2-small
+    tmux provision-server -p aws -l eu-west-1 -k key api-1 # AWS, t3.small
+    tmux provision-server -p azure -m Standard_B2s db-1    # Azure, eastus
+    tmux delete-provisioned-server api-1
+
+Creates or deletes a VM with the provider's CLI (`gcloud`, `aws` or `az`),
+which must be installed and logged in. `-l` is the zone or region, `-m` the
+machine type, `-i` the image and `-k` the AWS key pair. Defaults:
+
+| provider | location        | machine        | image             |
+|----------|-----------------|----------------|-------------------|
+| `gcp`    | `us-central1-a` | `e2-small`     | Debian 12         |
+| `aws`    | `us-east-1`     | `t3.small`     | Amazon Linux 2023 |
+| `azure`  | `eastus`        | `Standard_B1s` | Debian 12         |
+
+Each server is recorded (name, provider, location, id) in `provisioned` in
+the socket directory, so `delete-provisioned-server` only needs the name. On
+Azure each server gets its own resource group, `tmux-<name>`, which is deleted
+with it. Servers made elsewhere can be deleted with `-p` and `-l`.
+
 ## Options
 
 | option               | values                         | default  |

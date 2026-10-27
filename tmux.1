@@ -1324,6 +1324,72 @@ or
 .Ic agent-command .
 .Ic new-window
 in an agent session also creates an agent.
+.It Xo Ic provision-server
+.Op Fl i Ar image
+.Op Fl k Ar key-name
+.Op Fl l Ar location
+.Op Fl m Ar machine-type
+.Op Fl p Ar provider
+.Ar name
+.Xc
+Provision a cloud server called
+.Ar name
+on
+.Ar provider ,
+which is
+.Ql gcp
+(the default),
+.Ql aws
+or
+.Ql azure ,
+using the provider's command line tool
+.Po
+.Xr gcloud 1 ,
+.Xr aws 1
+or
+.Xr az 1
+.Pc ,
+which must be installed and logged in.
+.Ar name
+is lowercase letters, digits and
+.Ql - ,
+starting with a letter.
+.Fl l
+gives the zone (GCP) or region (AWS and Azure),
+.Fl m
+the machine type,
+.Fl i
+the image (an image family on GCP, an AMI on AWS, an image URN on Azure) and
+.Fl k
+the EC2 key pair on AWS.
+The defaults are
+.Ql us-central1-a ,
+.Ql e2-small
+and Debian 12 on GCP;
+.Ql us-east-1 ,
+.Ql t3.small
+and Amazon Linux 2023 on AWS; and
+.Ql eastus ,
+.Ql Standard_B1s
+and Debian 12 on Azure, where each server gets its own resource group named
+.Ql tmux- Ns Ar name .
+The command waits until the server is created and prints the tool's output.
+Provisioned servers are recorded in a file called
+.Pa provisioned
+in the socket directory.
+.It Xo Ic delete-provisioned-server
+.Op Fl l Ar location
+.Op Fl p Ar provider
+.Ar name
+.Xc
+Delete a server created by
+.Ic provision-server ,
+using its provider and location from the record.
+A server that is not recorded can be deleted by giving
+.Fl p
+and
+.Fl l .
+On Azure, the server's whole resource group is deleted.
 .Tg new
 .It Xo Ic new-session
 .Op Fl AdDEPX

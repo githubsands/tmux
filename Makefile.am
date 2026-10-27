@@ -105,6 +105,7 @@ dist_tmux_SOURCES = \
 	cmd-lock-server.c \
 	cmd-move-window.c \
 	cmd-new-agent-session.c \
+	cmd-provision-server.c \
 	cmd-new-session.c \
 	cmd-new-window.c \
 	cmd-parse.y \

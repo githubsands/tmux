@@ -324,6 +324,9 @@ server_destroy_pane(struct window_pane *wp, int notify)
 		wp->fd = -1;
 	}
 
+	if (agent_restore(wp))
+		return;
+
 	remain_on_exit = options_get_number(wp->options, "remain-on-exit");
 	if (remain_on_exit != 0 && (~wp->flags & PANE_STATUSREADY))
 		return;

@@ -1290,6 +1290,20 @@ option.
 The
 .Ev TMUX_AGENT_FEED
 environment variable names the feed file.
+.Pp
+When the head agent or an agent runs
+.Ql claude ,
+it is started with its own conversation
+.Pq Fl Fl session-id .
+The conversation, index, name, role, restore count and working directory of
+each agent are written to the file named by
+.Ev TMUX_AGENT_RECORD ,
+which is kept after the session ends.
+If a claude agent exits, it is restarted with
+.Fl Fl resume
+so it continues from its saved conversation, as set by the
+.Ic agent-restore
+option.
 .Tg newa
 .It Xo Ic new-agent
 .Op Fl abdkPS
@@ -3869,6 +3883,13 @@ or
 .Ic both .
 The default is
 .Ic file .
+.It Xo Ic agent-restore
+.Op Ic on | off
+.Xc
+If on, a claude agent that exits is restarted, resuming its conversation.
+An agent that exits five times within 30 seconds is not restarted again.
+Killing the agent's window or pane does not restart it.
+The default is on.
 .It Ic head-agent-command Ar shell-command
 Command run by the head agent of a new agent session.
 If empty, the

@@ -56,6 +56,7 @@ server works too. If that fails the client comes back to the current server.
 | `agent-command`      | command for the agents         | empty    |
 | `head-agent-command` | command for the head agent     | empty    |
 | `agent-feed`         | `off`, `file`, `input`, `both` | `file`   |
+| `agent-restore`      | `on`, `off`                    | `on`     |
 
     tmux set -g agent codex
     tmux set -t research agent-command 'claude --model opus'
@@ -64,3 +65,25 @@ server works too. If that fails the client comes back to the current server.
 With `agent-feed file`, agent output is written as `[index:name] line` to the
 file named by `$TMUX_AGENT_FEED`. With `input`, it is typed into the head
 agent.
+
+## Agent context
+
+Every claude agent (including `control-agent`) gets its own conversation,
+started with `claude --session-id <uuid>`. The session records each agent's
+conversation in the file named by `$TMUX_AGENT_RECORD`
+(`SOCKET-SESSION.agents`, next to the socket), which is kept after the
+session ends:
+
+    # session research: index name role conversation restores cwd
+    1	control-agent	control	98357576-ac72-441a-a926-ffdc30f26924	0	/src/app
+    2	agent-1	agent	1392b7be-167f-4872-9e55-ac525201dc94	1	/src/app
+
+If a claude agent exits or crashes, it is restarted in the same window with
+`claude --resume <uuid>`, so it picks up its saved context. An agent that
+exits five times within 30 seconds is left closed, and killing an agent's
+window or pane never restarts it. Turn it off with
+`tmux set -t research agent-restore off`.
+
+To bring back an agent by hand, even after the server is gone:
+
+    cd /src/app && claude --resume 1392b7be-167f-4872-9e55-ac525201dc94

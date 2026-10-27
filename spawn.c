@@ -192,6 +192,8 @@ spawn_window(struct spawn_context *sc, char **cause)
 		} else
 			w->name = default_window_name(w);
 	}
+	if (s->flags & SESSION_AGENTS)
+		agent_save(s);
 
 	/* Switch to the new window if required. */
 	if (~sc->flags & SPAWN_DETACHED)
@@ -216,7 +218,7 @@ spawn_pane(struct spawn_context *sc, char **cause)
 	struct window_pane	 *new_wp;
 	struct environ		 *child;
 	struct environ_entry	 *ee;
-	char			**argv, *cp, **argvp, *argv0, *cwd;
+	char			**argv, *cp, **argvp, *argv0, *cwd, *agentcmd = NULL;
 	const char		 *cmd, *tmp;
 	int			  argc;
 	u_int			  idx;
@@ -289,6 +291,9 @@ spawn_pane(struct spawn_context *sc, char **cause)
 			cmd = agent_command(s);
 		if (cmd == NULL || *cmd == '\0')
 			cmd = options_get_string(s->options, "default-command");
+		if (cmd != NULL && *cmd != '\0' &&
+		    (agentcmd = agent_spawn_command(w, cmd)) != NULL)
+			cmd = agentcmd;
 		if (cmd != NULL && *cmd != '\0') {
 			argc = 1;
 			argv = (char **)&cmd;
@@ -314,6 +319,7 @@ spawn_pane(struct spawn_context *sc, char **cause)
 		new_wp->argc = argc;
 		new_wp->argv = cmd_copy_argv(argc, argv);
 	}
+	free(agentcmd);
 
 	/* Create an environment for this pane. */
 	child = environ_for_session(s, 0);

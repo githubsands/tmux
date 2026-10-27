@@ -458,6 +458,14 @@ const struct options_table_entry options_table[] = {
 		  "input, or both."
 	},
 
+	{ .name = "agent-restore",
+	  .type = OPTIONS_TABLE_FLAG,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .default_num = 1,
+	  .text = "Whether a claude agent that exits is restarted, resuming "
+		  "its saved conversation."
+	},
+
 	{ .name = "default-command",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_SESSION,

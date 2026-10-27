@@ -361,6 +361,7 @@ window_destroy(struct window *w)
 
 	options_free(w->options);
 
+	free(w->agent_context);
 	free(w->name);
 	free(w);
 }

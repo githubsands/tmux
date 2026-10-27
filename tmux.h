@@ -1077,6 +1077,9 @@ struct window {
 #define WINDOW_AGENT_WORKER 2
 #define WINDOW_AGENT_OPERATOR 3
 	int		 agent;
+	char		*agent_context;
+	u_int		 agent_restores;
+	time_t		 agent_restore_time;
 
 	int		 alerts_queued;
 	TAILQ_ENTRY(window) alerts_entry;
@@ -1198,6 +1201,7 @@ struct session {
 	int		 agent_fd;
 	char		*agent_feed;
 	u_int		 agent_next;
+	char		*agent_record;
 
 	u_int		 attached;
 
@@ -3083,6 +3087,8 @@ void	control_notify_session_window_changed(struct session *);
 /* agent.c */
 #define AGENT_COUNT_MAX 64
 #define AGENT_IDLE_TIME 5
+#define AGENT_RESTORE_MAX 5
+#define AGENT_RESTORE_TIME 30
 void		 agent_session_init(struct session *);
 void		 agent_session_free(struct session *);
 struct window_pane *agent_head(struct session *);
@@ -3091,6 +3097,9 @@ const char	*agent_role(struct window *);
 char		*agent_name(struct session *);
 const char	*agent_status(struct window *);
 void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
+char		*agent_spawn_command(struct window *, const char *);
+int		 agent_restore(struct window_pane *);
+void		 agent_save(struct session *);
 
 /* cmd-new-session.c */
 enum cmd_retval	 cmd_new_session_run(struct cmd *, struct cmdq_item *, int);

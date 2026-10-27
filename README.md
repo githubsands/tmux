@@ -7,36 +7,47 @@ which gets the output of every other agent as one multiplexed stream.
 
 ```mermaid
 flowchart TB
-    subgraph S["session: research (new-agent-session -s research -N 3)"]
+    subgraph SRV["tmux server - socket: agents ($TMUX_TMPDIR/tmux-UID/agents)"]
         direction TB
-        OP["🧑‍💻 <b>0: operator</b><br/>your shell"]
-        CA["🧠 <b>1: control-agent</b><br/>head agent · claude / codex / openai"]
+        subgraph S["session: research (new-agent-session -s research -N 3)"]
+            direction TB
+            OP["<b>0: operator</b><br/>your shell"]
+            CA["<b>1: control-agent</b><br/>head agent - claude / codex / openai"]
 
-        MUX{{"multiplexer<br/>strip escapes · tag lines [index:name]"}}
-        FEED[("$TMUX_AGENT_FEED<br/>log file")]
+            MUX{{"multiplexer<br/>strip escapes, tag lines [index:name]"}}
+            FEED[("$TMUX_AGENT_FEED<br/>SOCKET-agents-ID.log")]
 
-        A1["🤖 <b>2: agent-1</b><br/>running"]
-        A2["🤖 <b>3: agent-2</b><br/>idle"]
-        A3["🤖 <b>4: agent-3</b><br/>exited"]
+            A1["<b>2: agent-1</b><br/>running"]
+            A2["<b>3: agent-2</b><br/>idle"]
+            A3["<b>4: agent-3</b><br/>exited"]
 
-        A1 & A2 & A3 -- output --> MUX
-        MUX -- "agent-feed file" --> FEED
-        FEED -. reads .-> CA
-        MUX -- "agent-feed input" --> CA
+            A1 & A2 & A3 -- output --> MUX
+            MUX -- "agent-feed file" --> FEED
+            FEED -. reads .-> CA
+            MUX -- "agent-feed input" --> CA
+        end
+        MORE["other agent sessions on the same server"]
     end
 
+    STOCK["stock tmux server - socket: default<br/>never contacted"]
+    SRV ~~~ STOCK
+
+    classDef srv fill:#f7f9fc,stroke:#4a5a78,color:#1c2740
     classDef op fill:#e8f1ff,stroke:#3b6fd8,color:#0b2a66
     classDef ctl fill:#f3e8ff,stroke:#8a3fd1,color:#3b0a66
     classDef run fill:#e6f7ec,stroke:#2f9e5a,color:#0d3d20
     classDef idle fill:#fff6e0,stroke:#d19a1f,color:#5a3d00
     classDef dead fill:#fde8e8,stroke:#c94040,color:#5c1010
     classDef mux fill:#f2f2f2,stroke:#666,color:#222
+    classDef faded fill:#fafafa,stroke:#aaa,color:#777,stroke-dasharray:4 3
+    class SRV srv
     class OP op
     class CA ctl
     class A1 run
     class A2 idle
     class A3 dead
     class MUX,FEED mux
+    class MORE,STOCK faded
 ```
 
 Feed lines look like:
@@ -44,8 +55,9 @@ Feed lines look like:
     [2:agent-1] wrote parser.c
     [3:agent-2] tests passing
 
-It uses its own socket (`agents`) and `$TMUX_AGENTS`, so it never talks to a
-stock tmux server.
+Every agent session lives in one tmux server, reached through its own socket
+(`agents`, or the name in `$TMUX_AGENTS`), so it never talks to a stock tmux
+server. `tmux choose-server` lists this server alongside any others.
 
 ## Build
 

@@ -193,7 +193,7 @@ make_label(const char *label, char **cause)
 
 	*cause = NULL;
 	if (label == NULL)
-		label = "default";
+		label = "agents";
 	uid = getuid();
 
 	expand_paths(TMUX_SOCK, &paths, &n, 1);
@@ -492,11 +492,11 @@ main(int argc, char **argv)
 
 	/*
 	 * If socket is specified on the command-line with -S or -L, it is
-	 * used. Otherwise, $TMUX is checked and if that fails "default" is
-	 * used.
+	 * used. Otherwise, $TMUX_AGENTS is checked and if that fails "agents"
+	 * is used. $TMUX is not used so a stock tmux server is never found.
 	 */
 	if (path == NULL && label == NULL) {
-		s = getenv("TMUX");
+		s = getenv("TMUX_AGENTS");
 		if (s != NULL && *s != '\0' && *s != ',') {
 			path = xstrdup(s);
 			path[strcspn(path, ",")] = '\0';

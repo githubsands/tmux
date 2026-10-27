@@ -165,7 +165,12 @@ or
 .Pa /tmp
 if it is unset.
 The default socket is named
-.Em default .
+.Em agents ,
+so a stock
+.Nm
+server on the
+.Em default
+socket is never used.
 This option allows a different socket name to be specified, allowing several
 independent
 .Nm
@@ -5528,8 +5533,12 @@ when a new session is created or an old reattached.
 .Nm
 also initialises the
 .Ev TMUX
-variable with some internal information to allow commands to be executed
-from inside, and the
+and
+.Ev TMUX_AGENTS
+variables with some internal information to allow commands to be executed
+from inside (only
+.Ev TMUX_AGENTS
+is used to find the server), and the
 .Ev TERM
 variable with the correct terminal setting of
 .Ql screen .

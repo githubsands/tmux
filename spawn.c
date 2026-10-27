@@ -282,6 +282,8 @@ spawn_pane(struct spawn_context *sc, char **cause)
 			cmd = options_get_string(s->options, "agent-command");
 		else
 			cmd = NULL;
+		if (w->agent != WINDOW_AGENT_NONE && *cmd == '\0')
+			cmd = agent_command(s);
 		if (cmd == NULL || *cmd == '\0')
 			cmd = options_get_string(s->options, "default-command");
 		if (cmd != NULL && *cmd != '\0') {

@@ -3079,6 +3079,7 @@ void	control_notify_session_window_changed(struct session *);
 void		 agent_session_init(struct session *);
 void		 agent_session_free(struct session *);
 struct window_pane *agent_head(struct session *);
+const char	*agent_command(struct session *);
 const char	*agent_role(struct window *);
 void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
 

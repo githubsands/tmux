@@ -87,6 +87,7 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 	char			*cause, *cwd = NULL, *cp, *newname = NULL;
 	char			*name, *prefix = NULL;
 	int			 detached, already_attached, is_control = 0;
+	int			 agent = -1;
 	u_int			 sx, sy, dsx, dsy, count = args_count(args);
 	struct spawn_context	 sc = { 0 };
 	enum cmd_retval		 retval;
@@ -104,6 +105,16 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 	if (args_has(args, 't') && (count != 0 || args_has(args, 'n'))) {
 		cmdq_error(item, "command or window name given with target");
 		return (CMD_RETURN_ERROR);
+	}
+
+	if (agents && args_has(args, 'a')) {
+		agent = options_find_choice(options_table_entry(options_get(
+		    global_s_options, "agent")), args_get(args, 'a'), &cause);
+		if (agent < 0) {
+			cmdq_error(item, "invalid agent: %s", args_get(args, 'a'));
+			free(cause);
+			return (CMD_RETURN_ERROR);
+		}
 	}
 
 	tmp = args_get(args, 's');
@@ -274,6 +285,8 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 			dsy = sy;
 		options_set_string(oo, "default-size", 0, "%ux%u", dsx, dsy);
 	}
+	if (agent != -1)
+		options_set_number(oo, "agent", agent);
 	env = environ_create();
 	if (c != NULL && !args_has(args, 'E'))
 		environ_update(global_s_options, c->environ, env);

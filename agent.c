@@ -86,6 +86,16 @@ agent_head(struct session *s)
 	return (NULL);
 }
 
+/* Command for the agent selected by the agent option of a session. */
+const char *
+agent_command(struct session *s)
+{
+	struct options_entry	*o = options_get(s->options, "agent");
+
+	return (options_table_entry(o)->choices[options_get_number(s->options,
+	    "agent")]);
+}
+
 /* Name of a window's agent role. */
 const char *
 agent_role(struct window *w)

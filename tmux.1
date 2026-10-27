@@ -1222,6 +1222,7 @@ Lock all clients attached to
 .Tg newas
 .It Xo Ic new-agent-session
 .Op Fl AdDEPX
+.Op Fl a Ar agent
 .Op Fl c Ar start-directory
 .Op Fl e Ar environment
 .Op Fl F Ar format
@@ -1243,6 +1244,10 @@ and running
 .Ar shell-command
 or
 .Ic head-agent-command .
+.Fl a
+sets the
+.Ic agent
+option for the session.
 Every other window in the session is an agent; output from agents has
 escape sequences removed, is split into lines prefixed with
 .Ql [index:name]
@@ -3770,11 +3775,23 @@ Set action on a bell in a window when
 is on.
 The values are the same as those for
 .Ic activity-action .
+.It Xo Ic agent
+.Op Ic claude | codex | openai
+.Xc
+The agent run by the head agent and agents of an agent session when no
+command is given and
+.Ic head-agent-command
+or
+.Ic agent-command
+is empty.
+The command run is the agent's name.
+The default is
+.Ic claude .
 .It Ic agent-command Ar shell-command
 Command run by new agents in an agent session.
-If empty,
-.Ic default-command
-is used.
+If empty, the
+.Ic agent
+option is used.
 .It Xo Ic agent-feed
 .Op Ic off | file | input | both
 .Xc
@@ -3789,9 +3806,9 @@ The default is
 .Ic file .
 .It Ic head-agent-command Ar shell-command
 Command run by the head agent of a new agent session.
-If empty,
-.Ic default-command
-is used.
+If empty, the
+.Ic agent
+option is used.
 .It Ic default-command Ar shell-command
 Set the command used for new windows (if not specified when the window is
 created) to

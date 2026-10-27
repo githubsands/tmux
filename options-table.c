@@ -50,6 +50,9 @@ static const char *options_table_status_justify_list[] = {
 static const char *options_table_status_position_list[] = {
 	"top", "bottom", NULL
 };
+static const char *options_table_agent_list[] = {
+	"claude", "codex", "openai", NULL
+};
 static const char *options_table_agent_feed_list[] = {
 	"off", "file", "input", "both", NULL
 };
@@ -418,12 +421,21 @@ const struct options_table_entry options_table[] = {
 	  .text = "Action to take on a bell alert."
 	},
 
+	{ .name = "agent",
+	  .type = OPTIONS_TABLE_CHOICE,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .choices = options_table_agent_list,
+	  .default_num = 0,
+	  .text = "Agent run by the head agent and agents of an agent session "
+		  "when no command is given."
+	},
+
 	{ .name = "agent-command",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_SESSION,
 	  .default_str = "",
 	  .text = "Command to run in new agents in an agent session. If empty, "
-		  "default-command is used."
+		  "the agent option is used."
 	},
 
 	{ .name = "agent-feed",
@@ -449,7 +461,7 @@ const struct options_table_entry options_table[] = {
 	  .scope = OPTIONS_TABLE_SESSION,
 	  .default_str = "",
 	  .text = "Command to run as the head agent of a new agent session. If "
-		  "empty, default-command is used."
+		  "empty, the agent option is used."
 	},
 
 	{ .name = "default-shell",

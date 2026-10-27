@@ -31,9 +31,9 @@ const struct cmd_entry cmd_new_agent_session_entry = {
 	.name = "new-agent-session",
 	.alias = "newas",
 
-	.args = { "Ac:dDe:EF:f:n:Ps:t:x:Xy:", 0, -1, NULL },
-	.usage = "[-AdDEPX] [-c start-directory] [-e environment] [-F format] "
-		 "[-f flags] [-n window-name] [-s session-name] "
+	.args = { "a:Ac:dDe:EF:f:n:Ps:t:x:Xy:", 0, -1, NULL },
+	.usage = "[-AdDEPX] [-a agent] [-c start-directory] [-e environment] "
+		 "[-F format] [-f flags] [-n window-name] [-s session-name] "
 		 CMD_TARGET_SESSION_USAGE " [-x width] [-y height] "
 		 "[shell-command]",
 

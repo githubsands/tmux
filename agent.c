@@ -15,9 +15,14 @@
  */
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 
+#include <ctype.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,6 +42,13 @@
  * the conversation of every agent is recorded in a file named by
  * $TMUX_AGENT_RECORD. If a claude agent exits, it is restarted with --resume
  * so it carries on from its saved context.
+ *
+ * Every agent also has its own identity: an OpenPGP key in a GnuPG home
+ * directory of its own (named by $GNUPGHOME in the agent), so each agent holds
+ * a private key that no other agent can read. Once every agent in a session
+ * has a key, the public keys are distributed: each agent imports and locally
+ * signs the keys of the others, and all of them are written to the file named
+ * by $TMUX_AGENT_KEYS.
  */
 
 #define AGENT_STATE_TEXT 0
@@ -66,6 +78,8 @@ agent_session_init(struct session *s)
 			*cp = '_';
 	}
 	environ_set(s->environ, "TMUX_AGENT_RECORD", 0, "%s", s->agent_record);
+	environ_set(s->environ, "TMUX_AGENT_KEYS", 0, "%s-%s.keys", socket_path,
+	    s->name);
 
 	xasprintf(&s->agent_feed, "%s-agents-%u.log", socket_path, s->id);
 	s->agent_fd = open(s->agent_feed, O_WRONLY|O_CREAT|O_TRUNC|O_APPEND,
@@ -345,18 +359,19 @@ agent_save(struct session *s)
 		free(path);
 		return;
 	}
-	fprintf(f, "# session %s: index name role conversation restores cwd\n",
-	    s->name);
+	fprintf(f, "# session %s: index name role conversation restores cwd "
+	    "key\n", s->name);
 	RB_FOREACH(wl, winlinks, &s->windows) {
 		w = wl->window;
 		if (w->agent == WINDOW_AGENT_NONE)
 			continue;
 		wp = w->active;
-		fprintf(f, "%d\t%s\t%s\t%s\t%u\t%s\n", wl->idx, w->name,
+		fprintf(f, "%d\t%s\t%s\t%s\t%u\t%s\t%s\n", wl->idx, w->name,
 		    agent_role(w),
 		    w->agent_context != NULL ? w->agent_context : "-",
 		    w->agent_restores,
-		    (wp != NULL && wp->cwd != NULL) ? wp->cwd : "-");
+		    (wp != NULL && wp->cwd != NULL) ? wp->cwd : "-",
+		    w->agent_key != NULL ? w->agent_key : "-");
 	}
 	if (fclose(f) != 0 || rename(path, s->agent_record) != 0) {
 		log_debug("%s: write %s failed", __func__, s->agent_record);
@@ -441,4 +456,202 @@ agent_restore(struct window_pane *wp)
 
 	agent_save(s);
 	return (1);
+}
+
+/* GnuPG home directory holding an agent's keys, as an absolute path. */
+static char *
+agent_key_home(struct window *w)
+{
+	char	*copy, *path, dir[PATH_MAX];
+
+	copy = xstrdup(socket_path);
+	if (realpath(dirname(copy), dir) == NULL)
+		strlcpy(dir, dirname(copy), sizeof dir);
+	xasprintf(&path, "%s/agent-keys/%s", dir, w->agent_id);
+	free(copy);
+	return (path);
+}
+
+/* Make a directory only its owner can use, if it does not exist. */
+static int
+agent_mkdir(const char *path)
+{
+	if (mkdir(path, 0700) != 0 && errno != EEXIST) {
+		log_debug("%s: mkdir %s failed", __func__, path);
+		return (-1);
+	}
+	return (0);
+}
+
+/*
+ * Give an agent its identity in the environment of its process: an id and a
+ * GnuPG home directory for its private key, created the first time.
+ */
+void
+agent_spawn_environ(struct window *w, struct environ *env)
+{
+	char	*home, *parent;
+
+	if (w->agent != WINDOW_AGENT_HEAD && w->agent != WINDOW_AGENT_WORKER)
+		return;
+	if (w->agent_id == NULL)
+		w->agent_id = agent_uuid();
+
+	home = agent_key_home(w);
+	parent = xstrdup(home);
+	if (agent_mkdir(dirname(parent)) == 0 && agent_mkdir(home) == 0) {
+		environ_set(env, "GNUPGHOME", 0, "%s", home);
+		environ_set(env, "TMUX_AGENT_ID", 0, "%s", w->agent_id);
+	}
+	free(parent);
+	free(home);
+}
+
+static void	agent_distribute(struct session *);
+
+/* Key generation has finished: the last line of output is the fingerprint. */
+static void
+agent_identity_callback(struct job *job)
+{
+	u_int			*id = job_get_data(job);
+	struct bufferevent	*event = job_get_event(job);
+	struct window		*w;
+	struct winlink		*wl;
+	char			*line, *fpr = NULL;
+	int			 status = job_get_status(job);
+
+	while ((line = evbuffer_readline(event->input)) != NULL) {
+		if (strlen(line) == 40 && strspn(line, "0123456789ABCDEF") == 40) {
+			free(fpr);
+			fpr = line;
+		} else {
+			log_debug("%s: %s", __func__, line);
+			free(line);
+		}
+	}
+
+	if ((w = window_find_by_id(*id)) != NULL) {
+		w->agent_key_job = 0;
+		if (fpr == NULL || !WIFEXITED(status) ||
+		    WEXITSTATUS(status) != 0)
+			log_debug("%s: @%u key not created", __func__, w->id);
+		else {
+			free(w->agent_key);
+			w->agent_key = fpr;
+			fpr = NULL;
+			log_debug("%s: @%u key %s", __func__, w->id, w->agent_key);
+			TAILQ_FOREACH(wl, &w->winlinks, wentry) {
+				agent_save(wl->session);
+				agent_distribute(wl->session);
+			}
+		}
+	}
+	free(fpr);
+}
+
+/*
+ * Create an agent's OpenPGP key with gpg in the background, in its own GnuPG
+ * home. The key has no passphrase so the agent can use it unattended; it is
+ * protected by the directory only being readable by the user. The public key
+ * is also exported to public.asc so others can import it.
+ */
+void
+agent_identity(struct session *s, struct window *w)
+{
+	char	*home, *uid, *cp, *cmd;
+	u_int	*id;
+
+	if (w->agent_id == NULL || w->agent_key != NULL || w->agent_key_job)
+		return;
+
+	xasprintf(&uid, "%s/%s <%s@%s.tmux-agents>", s->name, w->name,
+	    w->agent_id, s->name);
+	for (cp = uid; *cp != '\0'; cp++) {
+		if (!isalnum((u_char)*cp) && strchr("/<>@.-_ ", *cp) == NULL)
+			*cp = '-';
+	}
+	home = agent_key_home(w);
+	xasprintf(&cmd, "command -v gpg >/dev/null 2>&1 || exit 127; "
+	    "g() { gpg --homedir '%s' --batch --no-tty \"$@\"; }; "
+	    "g --list-secret-keys --with-colons 2>/dev/null | grep -q '^sec' || "
+	    "g --pinentry-mode loopback --passphrase '' --quick-gen-key '%s' "
+	    "ed25519 sign never >/dev/null 2>&1 || exit 1; "
+	    "g --armor --export > '%s/public.asc' && "
+	    "g --list-secret-keys --with-colons | "
+	    "awk -F: '$1 == \"fpr\" { print $10; exit }'", home, uid, home);
+	free(uid);
+	free(home);
+
+	id = xmalloc(sizeof *id);
+	*id = w->id;
+	if (job_run(cmd, 0, NULL, NULL, NULL, "/", NULL,
+	    agent_identity_callback, free, id, 0, -1, -1) != NULL)
+		w->agent_key_job = 1;
+	else
+		free(id);
+	free(cmd);
+}
+
+static void
+agent_distribute_callback(struct job *job)
+{
+	int	status = job_get_status(job);
+
+	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		log_debug("%s: distributing keys failed", __func__);
+}
+
+/*
+ * Distribute the public keys of a session's agents once none is still being
+ * created: every agent imports and locally signs every other agent's key,
+ * and all the public keys are collected in the session's keys file.
+ */
+static void
+agent_distribute(struct session *s)
+{
+	struct winlink	*wl, *wl2;
+	struct window	*w, *w2;
+	struct evbuffer	*evb;
+	const char	*keys;
+	char		*home, *home2, *cmd;
+
+	RB_FOREACH(wl, winlinks, &s->windows) {
+		if (wl->window->agent_key_job)
+			return;
+	}
+	keys = environ_find(s->environ, "TMUX_AGENT_KEYS") != NULL ?
+	    environ_find(s->environ, "TMUX_AGENT_KEYS")->value : NULL;
+	if (keys == NULL)
+		return;
+
+	evb = evbuffer_new();
+	evbuffer_add_printf(evb, "g() { h=$1; shift; gpg --homedir \"$h\" "
+	    "--batch --no-tty --quiet \"$@\" >/dev/null 2>&1; }; : > '%s'; ",
+	    keys);
+	RB_FOREACH(wl, winlinks, &s->windows) {
+		w = wl->window;
+		if (w->agent_key == NULL)
+			continue;
+		home = agent_key_home(w);
+		evbuffer_add_printf(evb, "cat '%s/public.asc' >> '%s'; ", home,
+		    keys);
+		RB_FOREACH(wl2, winlinks, &s->windows) {
+			w2 = wl2->window;
+			if (w2 == w || w2->agent_key == NULL)
+				continue;
+			home2 = agent_key_home(w2);
+			evbuffer_add_printf(evb, "g '%s' --import '%s/public.asc' "
+			    "&& g '%s' --quick-lsign-key %s; ", home, home2,
+			    home, w2->agent_key);
+			free(home2);
+		}
+		free(home);
+	}
+	evbuffer_add(evb, "true", 5);
+	cmd = (char *)EVBUFFER_DATA(evb);
+
+	log_debug("%s: %s", __func__, s->name);
+	job_run(cmd, 0, NULL, NULL, NULL, "/", NULL, agent_distribute_callback,
+	    NULL, NULL, 0, -1, -1);
+	evbuffer_free(evb);
 }

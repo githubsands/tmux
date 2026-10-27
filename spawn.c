@@ -192,8 +192,10 @@ spawn_window(struct spawn_context *sc, char **cause)
 		} else
 			w->name = default_window_name(w);
 	}
-	if (s->flags & SESSION_AGENTS)
+	if (s->flags & SESSION_AGENTS) {
+		agent_identity(s, w);
 		agent_save(s);
+	}
 
 	/* Switch to the new window if required. */
 	if (~sc->flags & SPAWN_DETACHED)
@@ -326,6 +328,7 @@ spawn_pane(struct spawn_context *sc, char **cause)
 	if (sc->environ != NULL)
 		environ_copy(sc->environ, child);
 	environ_set(child, "TMUX_PANE", 0, "%%%u", new_wp->id);
+	agent_spawn_environ(w, child);
 
 	/*
 	 * Then the PATH environment variable. The session one is replaced from

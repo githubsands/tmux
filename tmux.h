@@ -1078,6 +1078,9 @@ struct window {
 #define WINDOW_AGENT_OPERATOR 3
 	int		 agent;
 	char		*agent_context;
+	char		*agent_id;
+	char		*agent_key;
+	int		 agent_key_job;
 	u_int		 agent_restores;
 	time_t		 agent_restore_time;
 
@@ -3100,6 +3103,8 @@ void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
 char		*agent_spawn_command(struct window *, const char *);
 int		 agent_restore(struct window_pane *);
 void		 agent_save(struct session *);
+void		 agent_spawn_environ(struct window *, struct environ *);
+void		 agent_identity(struct session *, struct window *);
 
 /* cmd-new-session.c */
 enum cmd_retval	 cmd_new_session_run(struct cmd *, struct cmdq_item *, int);

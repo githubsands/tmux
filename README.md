@@ -47,6 +47,28 @@ Enter on a session or window of another server replaces the client with one
 attached to that server, using the binary that runs it, so a stock tmux
 server works too. If that fails the client comes back to the current server.
 
+## Agent identity
+
+Every agent (`control-agent` and each `agent-N`) has its own OpenPGP identity:
+an ed25519 key made with `gpg` in its own GnuPG home,
+`<socket dir>/agent-keys/<agent id>` (mode 0700). Inside the agent,
+`GNUPGHOME` points there and `TMUX_AGENT_ID` is set, so only that agent holds
+its private key:
+
+    gpg --clearsign report.md            # inside agent-1: signs as research/agent-1
+
+When a session is created the keys are distributed: once every agent has a
+key, each one imports and locally signs every other agent's public key, so
+agents can verify each other (`gpg --verify` shows `Good signature ... [full]`).
+An agent added later with `new-agent` joins the exchange. All public keys are
+collected in `$TMUX_AGENT_KEYS` for the operator:
+
+    gpg --import "$TMUX_AGENT_KEYS"      # from the operator window
+
+Fingerprints are listed in the last column of `$TMUX_AGENT_RECORD`. Keys have
+no passphrase so agents can sign unattended; they are protected by the
+directory permissions.
+
 ## Cloud servers
 
     tmux provision-server -p gcp web-1                     # GCP, us-central1-a, e2-small
@@ -96,9 +118,9 @@ conversation in the file named by `$TMUX_AGENT_RECORD`
 (`SOCKET-SESSION.agents`, next to the socket), which is kept after the
 session ends:
 
-    # session research: index name role conversation restores cwd
-    1	control-agent	control	98357576-ac72-441a-a926-ffdc30f26924	0	/src/app
-    2	agent-1	agent	1392b7be-167f-4872-9e55-ac525201dc94	1	/src/app
+    # session research: index name role conversation restores cwd key
+    1	control-agent	control	98357576-...	0	/src/app	629129354411D1FE...
+    2	agent-1	agent	1392b7be-...	1	/src/app	67CBDC32C51EE6A2...
 
 If a claude agent exits or crashes, it is restarted in the same window with
 `claude --resume <uuid>`, so it picks up its saved context. An agent that

@@ -1304,6 +1304,25 @@ If a claude agent exits, it is restarted with
 so it continues from its saved conversation, as set by the
 .Ic agent-restore
 option.
+.Pp
+Each agent also has its own identity: an ed25519 OpenPGP key created with
+.Xr gpg 1
+in a GnuPG home directory of its own under
+.Pa agent-keys
+in the socket directory, readable only by the user.
+The agent's process has
+.Ev GNUPGHOME
+set to that directory and
+.Ev TMUX_AGENT_ID
+to its id, so it holds a private key no other agent shares.
+The key has no passphrase so the agent can sign without help.
+Once every agent in the session has a key, the keys are distributed: each
+agent imports and locally signs the public key of every other agent, so it
+can verify their signatures, and all the public keys are written to the file
+named by
+.Ev TMUX_AGENT_KEYS .
+An agent added later is included in the same way.
+Each agent's key fingerprint is listed in the record file.
 .Tg newa
 .It Xo Ic new-agent
 .Op Fl abdkPS

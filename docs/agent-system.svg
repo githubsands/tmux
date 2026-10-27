@@ -18,16 +18,14 @@
   <text x="190" y="168" font-size="13" fill="#0b2a66" text-anchor="middle">your shell</text>
   <rect x="94" y="181" width="193" height="18" rx="9" fill="#ffffff" stroke="#3b6fd8" stroke-width="1.5"/>
   <text x="190" y="194" font-size="10.5" fill="#0b2a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">operator key 0386&#8230;FC52 (you)</text>
-  <rect x="560" y="110" width="330" height="124" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
+  <rect x="560" y="110" width="330" height="100" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
   <text x="725" y="132" font-size="16" fill="#3b0a66" font-weight="bold" text-anchor="middle">1: control-agent</text>
   <text x="725" y="149" font-size="13" fill="#3b0a66" text-anchor="middle">head agent - claude / codex / openai</text>
-  <rect x="570" y="159" width="310" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#8a3fd1" stroke-width="1" stroke-dasharray="3 2"/>
-  <text x="725.0" y="174.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <text x="725.0" y="185.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq+hYJKwYBBAHaRw8BAQdAx4ZXJB2UIOZm5alhUjM4Z7uk…</text>
-  <text x="725.0" y="197.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">gpg/7k60SXJlc2VhcmNoL2NvbnRyb2wtYWdlbnQgPDc2ZTFhMmNm…</text>
-  <text x="725.0" y="208.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <rect x="625" y="225" width="200" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
-  <text x="725" y="238" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp B25E&#8230;1FEF &#183; signed by you</text>
+  <rect x="570" y="159" width="310" height="36" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#8a3fd1" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="725.0" y="174" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">B25E&#160;8BF3&#160;6858&#160;ED1D&#160;0F9B</text>
+  <text x="725.0" y="187" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">0EF7&#160;773F&#160;3EF0&#160;9FFF&#160;1FEF</text>
+  <rect x="676" y="201" width="98" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
+  <text x="725" y="214" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">signed by you</text>
   <polygon points="320,340 352,302 608,302 640,340 608,378 352,378" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
   <text x="480" y="335" font-size="15" fill="#222222" font-weight="bold" text-anchor="middle">multiplexer</text>
   <text x="480" y="357" font-size="12" fill="#222222" text-anchor="middle">strip escapes, tag lines [index:name]</text>
@@ -39,42 +37,36 @@
   <ellipse cx="190" cy="312" rx="105" ry="12" fill="#f2f2f2" stroke="#666666" stroke-width="2"/>
   <text x="190" y="348" font-size="13" fill="#222222" font-weight="bold" text-anchor="middle">$TMUX_AGENT_RECORD</text>
   <text x="190" y="367" font-size="12" fill="#222222" text-anchor="middle">conversation id per agent</text>
-  <rect x="70" y="450" width="240" height="124" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
+  <rect x="70" y="450" width="240" height="100" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
   <text x="190" y="472" font-size="16" fill="#0d3d20" font-weight="bold" text-anchor="middle">2: agent-1</text>
   <text x="190" y="489" font-size="13" fill="#0d3d20" text-anchor="middle">running</text>
-  <rect x="80" y="499" width="220" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#2f9e5a" stroke-width="1" stroke-dasharray="3 2"/>
-  <text x="190.0" y="514.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <text x="190.0" y="525.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq+xYJKwYBBAHaRw8BAQdA5r888Tco…</text>
-  <text x="190.0" y="537.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">o2aN/s20Q3Jlc2VhcmNoL2FnZW50LTEgPDU5…</text>
-  <text x="190.0" y="548.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <rect x="90" y="565" width="200" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
-  <text x="190" y="578" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp F4A6&#8230;9501 &#183; signed by you</text>
-  <rect x="360" y="450" width="240" height="124" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
+  <rect x="80" y="499" width="220" height="36" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#2f9e5a" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="190.0" y="514" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">F4A6&#160;8135&#160;ED8F&#160;57D0&#160;5609</text>
+  <text x="190.0" y="527" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">7051&#160;AD1E&#160;1544&#160;7660&#160;9501</text>
+  <rect x="141" y="541" width="98" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
+  <text x="190" y="554" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">signed by you</text>
+  <rect x="360" y="450" width="240" height="100" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
   <text x="480" y="472" font-size="16" fill="#5a3d00" font-weight="bold" text-anchor="middle">3: agent-2</text>
   <text x="480" y="489" font-size="13" fill="#5a3d00" text-anchor="middle">idle</text>
-  <rect x="370" y="499" width="220" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#d19a1f" stroke-width="1" stroke-dasharray="3 2"/>
-  <text x="480.0" y="514.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <text x="480.0" y="525.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq+xYJKwYBBAHaRw8BAQdAGeiZBSBz…</text>
-  <text x="480.0" y="537.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">NJg11le0Q3Jlc2VhcmNoL2FnZW50LTIgPDBk…</text>
-  <text x="480.0" y="548.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <rect x="380" y="565" width="200" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
-  <text x="480" y="578" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp 968D&#8230;4EC6 &#183; signed by you</text>
-  <rect x="650" y="450" width="240" height="124" rx="10" fill="#fde8e8" stroke="#c94040" stroke-width="2"/>
+  <rect x="370" y="499" width="220" height="36" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#d19a1f" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="480.0" y="514" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">968D&#160;A3EB&#160;5E18&#160;A55C&#160;B3CF</text>
+  <text x="480.0" y="527" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">46A2&#160;1DD4&#160;9F40&#160;FDE5&#160;4EC6</text>
+  <rect x="431" y="541" width="98" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
+  <text x="480" y="554" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">signed by you</text>
+  <rect x="650" y="450" width="240" height="100" rx="10" fill="#fde8e8" stroke="#c94040" stroke-width="2"/>
   <text x="770" y="472" font-size="16" fill="#5c1010" font-weight="bold" text-anchor="middle">4: agent-3</text>
   <text x="770" y="489" font-size="13" fill="#5c1010" text-anchor="middle">exited</text>
-  <rect x="660" y="499" width="220" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#c94040" stroke-width="1" stroke-dasharray="3 2"/>
-  <text x="770.0" y="514.0" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <text x="770.0" y="525.5" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/BYJKwYBBAHaRw8BAQdAnZq1Ld8x…</text>
-  <text x="770.0" y="537.0" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">pVfovTO0Q3Jlc2VhcmNoL2FnZW50LTMgPDQ3…</text>
-  <text x="770.0" y="548.5" font-size="9" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <rect x="670" y="565" width="200" height="18" rx="9" fill="#ffffff" stroke="#c94040" stroke-width="1.5"/>
-  <text x="770" y="578" font-size="10.5" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp 059B&#8230;1D53 &#183; signed by you</text>
+  <rect x="660" y="499" width="220" height="36" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#c94040" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="770.0" y="514" font-size="10.5" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">059B&#160;5626&#160;619F&#160;4170&#160;C8E5</text>
+  <text x="770.0" y="527" font-size="10.5" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">D58E&#160;0348&#160;DFF8&#160;D6B6&#160;1D53</text>
+  <rect x="721" y="541" width="98" height="18" rx="9" fill="#ffffff" stroke="#c94040" stroke-width="1.5"/>
+  <text x="770" y="554" font-size="10.5" fill="#5c1010" text-anchor="middle" font-family="Menlo, Monaco, monospace">signed by you</text>
   <path d="M190,450 L410,382" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
   <path d="M480,450 L480,382" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
   <path d="M770,450 L550,382" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M540,302 L636,248" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M540,302 L636,224" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
   <path d="M640,340 L706,340" stroke="#4a5a78" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M795,300 L795,248" stroke="#4a5a78" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <path d="M795,300 L795,224" stroke="#4a5a78" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
   <path d="M190,388 L190,446" stroke="#4a5a78" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
   <text x="82" y="412" font-size="12" fill="#4a5a78">claude --resume</text>
   <text x="82" y="428" font-size="12" fill="#4a5a78">on exit</text>
@@ -96,36 +88,30 @@
   <text x="1130" y="175" font-size="12" fill="#0b2a66" text-anchor="middle">shell</text>
   <rect x="1034" y="183" width="193" height="18" rx="9" fill="#ffffff" stroke="#3b6fd8" stroke-width="1.5"/>
   <text x="1130" y="196" font-size="10.5" fill="#0b2a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">operator key 0386&#8230;FC52 (you)</text>
-  <rect x="1020" y="210" width="220" height="120" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
+  <rect x="1020" y="210" width="220" height="100" rx="10" fill="#f3e8ff" stroke="#8a3fd1" stroke-width="2"/>
   <text x="1130" y="232" font-size="15" fill="#3b0a66" font-weight="bold" text-anchor="middle">1: control-agent</text>
   <text x="1130" y="248" font-size="12" fill="#3b0a66" text-anchor="middle">head agent</text>
-  <rect x="1030" y="258" width="200" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#8a3fd1" stroke-width="1" stroke-dasharray="3 2"/>
-  <text x="1130.0" y="273.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <text x="1130.0" y="284.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/BYJKwYBBAHaRw8BAQdAaeaV…</text>
-  <text x="1130.0" y="296.0" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">jFlm0uW0RmluZnJhL2NvbnRyb2wtYWdl…</text>
-  <text x="1130.0" y="307.5" font-size="9" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <rect x="1030" y="321" width="200" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
-  <text x="1130" y="334" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp E573&#8230;704B &#183; signed by you</text>
-  <rect x="1020" y="344" width="220" height="120" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
-  <text x="1130" y="366" font-size="15" fill="#0d3d20" font-weight="bold" text-anchor="middle">2: agent-1</text>
-  <text x="1130" y="382" font-size="12" fill="#0d3d20" text-anchor="middle">running</text>
-  <rect x="1030" y="392" width="200" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#2f9e5a" stroke-width="1" stroke-dasharray="3 2"/>
-  <text x="1130.0" y="407.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <text x="1130.0" y="418.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/RYJKwYBBAHaRw8BAQdAxZTq…</text>
-  <text x="1130.0" y="430.0" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">rPUj03S0QGluZnJhL2FnZW50LTEgPGFj…</text>
-  <text x="1130.0" y="441.5" font-size="9" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <rect x="1030" y="455" width="200" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
-  <text x="1130" y="468" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp E25A&#8230;1C9C &#183; signed by you</text>
-  <rect x="1020" y="478" width="220" height="120" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
-  <text x="1130" y="500" font-size="15" fill="#5a3d00" font-weight="bold" text-anchor="middle">3: agent-2</text>
-  <text x="1130" y="516" font-size="12" fill="#5a3d00" text-anchor="middle">idle</text>
-  <rect x="1030" y="526" width="200" height="58" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#d19a1f" stroke-width="1" stroke-dasharray="3 2"/>
-  <text x="1130.0" y="541.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----BEGIN&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <text x="1130.0" y="552.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">mDMEauEq/hYJKwYBBAHaRw8BAQdAu55y…</text>
-  <text x="1130.0" y="564.0" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">bcEb0gm0QGluZnJhL2FnZW50LTIgPGFi…</text>
-  <text x="1130.0" y="575.5" font-size="9" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">-----END&#160;PGP&#160;PUBLIC&#160;KEY&#160;BLOCK-----</text>
-  <rect x="1030" y="589" width="200" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
-  <text x="1130" y="602" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">pgp 48F3&#8230;3BDA &#183; signed by you</text>
+  <rect x="1030" y="258" width="200" height="36" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#8a3fd1" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1130.0" y="273" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">E573&#160;BAC1&#160;2B3E&#160;74ED&#160;943E</text>
+  <text x="1130.0" y="286" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">4827&#160;BB01&#160;E288&#160;4EBE&#160;704B</text>
+  <rect x="1081" y="301" width="98" height="18" rx="9" fill="#ffffff" stroke="#8a3fd1" stroke-width="1.5"/>
+  <text x="1130" y="314" font-size="10.5" fill="#3b0a66" text-anchor="middle" font-family="Menlo, Monaco, monospace">signed by you</text>
+  <rect x="1020" y="326" width="220" height="100" rx="10" fill="#e6f7ec" stroke="#2f9e5a" stroke-width="2"/>
+  <text x="1130" y="348" font-size="15" fill="#0d3d20" font-weight="bold" text-anchor="middle">2: agent-1</text>
+  <text x="1130" y="364" font-size="12" fill="#0d3d20" text-anchor="middle">running</text>
+  <rect x="1030" y="374" width="200" height="36" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#2f9e5a" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1130.0" y="389" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">E25A&#160;7B56&#160;93B8&#160;68AD&#160;FC2D</text>
+  <text x="1130.0" y="402" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">A51F&#160;CA71&#160;C0BE&#160;23A8&#160;1C9C</text>
+  <rect x="1081" y="417" width="98" height="18" rx="9" fill="#ffffff" stroke="#2f9e5a" stroke-width="1.5"/>
+  <text x="1130" y="430" font-size="10.5" fill="#0d3d20" text-anchor="middle" font-family="Menlo, Monaco, monospace">signed by you</text>
+  <rect x="1020" y="442" width="220" height="100" rx="10" fill="#fff6e0" stroke="#d19a1f" stroke-width="2"/>
+  <text x="1130" y="464" font-size="15" fill="#5a3d00" font-weight="bold" text-anchor="middle">3: agent-2</text>
+  <text x="1130" y="480" font-size="12" fill="#5a3d00" text-anchor="middle">idle</text>
+  <rect x="1030" y="490" width="200" height="36" rx="5" fill="#ffffff" fill-opacity="0.75" stroke="#d19a1f" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="1130.0" y="505" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">48F3&#160;3A93&#160;E41F&#160;8C1E&#160;6D64</text>
+  <text x="1130.0" y="518" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">106B&#160;1B82&#160;292A&#160;0869&#160;3BDA</text>
+  <rect x="1081" y="533" width="98" height="18" rx="9" fill="#ffffff" stroke="#d19a1f" stroke-width="1.5"/>
+  <text x="1130" y="546" font-size="10.5" fill="#5a3d00" text-anchor="middle" font-family="Menlo, Monaco, monospace">signed by you</text>
   <rect x="1000" y="644" width="260" height="40" rx="10" fill="#fafafa" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5 4"/>
   <text x="1130" y="669" font-size="13" fill="#777777" text-anchor="middle">other agent sessions</text>
 

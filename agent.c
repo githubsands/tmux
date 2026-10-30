@@ -184,6 +184,67 @@ agent_status(struct window *w)
 	return ("idle");
 }
 
+/* Is this the start of a box drawing character (U+2500 to U+257F)? */
+static int
+agent_is_box(const char *cp)
+{
+	return ((u_char)cp[0] == 0xe2 &&
+	    ((u_char)cp[1] == 0x94 || (u_char)cp[1] == 0x95) &&
+	    cp[2] != '\0');
+}
+
+/*
+ * The question an idle agent is waiting on: the lowest line on its screen
+ * ending in a question mark, without the box drawn around it. Lines starting
+ * with > are the user's own prompts and are skipped. Returns NULL if the agent
+ * is not idle or there is no question.
+ */
+char *
+agent_question(struct window *w)
+{
+	struct window_pane	*wp = w->active;
+	struct grid		*gd;
+	char			*line, *start, *end, *cp;
+	u_int			 y;
+
+	if (wp == NULL || strcmp(agent_status(w), "idle") != 0)
+		return (NULL);
+	gd = wp->base.grid;
+	for (y = screen_size_y(&wp->base); y > 0; y--) {
+		line = grid_view_string_cells(gd, 0, y - 1, gd->sx);
+		start = line;
+		end = line + strlen(line);
+		for (;;) {
+			if (*start == ' ' || *start == '|')
+				start++;
+			else if (agent_is_box(start))
+				start += 3;
+			else
+				break;
+		}
+		for (;;) {
+			if (end > start && (end[-1] == ' ' || end[-1] == '|'))
+				end--;
+			else if (end - start >= 3 && agent_is_box(end - 3))
+				end -= 3;
+			else
+				break;
+		}
+		if (end > start && end[-1] == '?' && *start != '>') {
+			*end = '\0';
+			cp = xstrdup(start);
+			free(line);
+			for (line = cp; *line != '\0'; line++) {
+				if (*line == '\t')
+					*line = ' ';
+			}
+			return (cp);
+		}
+		free(line);
+	}
+	return (NULL);
+}
+
 /* Deliver one line of agent output to each agent session it belongs to. */
 static void
 agent_emit(struct window_pane *wp, const char *line, size_t len)

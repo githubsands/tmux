@@ -2302,6 +2302,10 @@ server with a socket in the same directory as the current server may be chosen
 interactively.
 Each server is shown with the binary running it and its sessions and windows
 underneath; windows in an agent session are shown with their agent status.
+An idle agent waiting on a question (the lowest line on its screen ending in
+.Ql \&? )
+is shown with the question, which also heads its preview, and agent sessions
+show how many agents are waiting.
 The other servers are listed by running their own binary, so a stock
 .Nm
 server is shown as well.
@@ -5469,6 +5473,7 @@ The following variables are available, where appropriate:
 .It Li "window_activity_flag" Ta "" Ta "1 if window has activity"
 .It Li "window_agent" Ta "" Ta "Agent role: planning, operator, control, agent or empty"
 .It Li "window_agent_key" Ta "" Ta "Fingerprint of the agent's OpenPGP key"
+.It Li "window_agent_question" Ta "" Ta "Question an idle agent is waiting on"
 .It Li "window_agent_status" Ta "" Ta "Agent status: running, idle or exited"
 .It Li "window_bell_flag" Ta "" Ta "1 if window has bell"
 .It Li "window_bigger" Ta "" Ta "1 if window is larger than client"

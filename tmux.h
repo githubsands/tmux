@@ -3100,6 +3100,7 @@ const char	*agent_command(struct session *);
 const char	*agent_role(struct window *);
 char		*agent_name(struct session *);
 const char	*agent_status(struct window *);
+char		*agent_question(struct window *);
 void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
 char		*agent_spawn_command(struct window *, const char *);
 char		*agent_local_command(struct session *, struct window *,

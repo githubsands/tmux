@@ -63,7 +63,8 @@ static void		 window_server_key(struct window_mode_entry *,
 #define WINDOW_SERVER_FORMAT \
 	"#{session_name}\t#{session_attached}\t#{session_agents}\t" \
 	"#{window_index}\t#{window_name}\t#{window_agent}\t" \
-	"#{window_agent_status}\t#{window_active}\t#{window_agent_key}"
+	"#{window_agent_status}\t#{window_active}\t#{window_agent_key}\t" \
+	"#{window_agent_question}"
 
 static const struct menu_item window_server_menu_items[] = {
 	{ "Select", '\r', NULL },
@@ -499,10 +500,11 @@ window_server_build_server(struct window_server_modedata *data,
 {
 	struct window_server_itemdata	*item;
 	struct mode_tree_item		*mti, *smti = NULL;
-	char				*copy, *next, *line, *f[9], *text;
+	char				*copy, *next, *line, *f[10], *text;
 	char				*last = NULL, *shown, *copy2, *next2;
-	char				*line2, *g[9], *name, *key = NULL;
-	u_int				 nsessions = 0, count;
+	char				*line2, *g[10], *name, *key = NULL;
+	char				*question = NULL, waiting[32];
+	u_int				 nsessions = 0, count, nwaiting;
 	int				 idx;
 
 	/* Count sessions for the server line. */
@@ -532,21 +534,32 @@ window_server_build_server(struct window_server_modedata *data,
 			continue;
 
 		if (last == NULL || strcmp(last, f[0]) != 0) {
-			/* Count the windows in this session. */
+			/*
+			 * Count the windows in this session and the agents
+			 * waiting on a question.
+			 */
 			copy2 = next2 = xstrdup(next != NULL ? next : "");
 			count = 1;
+			nwaiting = (*f[9] != '\0');
 			while ((line2 = strsep(&next2, "\n")) != NULL) {
 				if (!window_server_split(line2, g, nitems(g)))
 					continue;
 				if (strcmp(g[0], f[0]) != 0)
 					break;
 				count++;
+				if (*g[9] != '\0')
+					nwaiting++;
 			}
 			free(copy2);
 
 			if (*f[2] == '1') {
-				xasprintf(&text, "%u agent%s%s", count,
-				    count == 1 ? "" : "s",
+				*waiting = '\0';
+				if (nwaiting != 0) {
+					xsnprintf(waiting, sizeof waiting,
+					    ", %u waiting", nwaiting);
+				}
+				xasprintf(&text, "%u agent%s%s%s", count,
+				    count == 1 ? "" : "s", waiting,
 				    strcmp(f[1], "0") != 0 ? " (attached)" : "");
 			} else {
 				xasprintf(&text, "%u window%s%s", count,
@@ -566,10 +579,15 @@ window_server_build_server(struct window_server_modedata *data,
 		if (*f[6] != '\0') {
 			if (*f[8] != '\0')
 				xasprintf(&key, " %s", f[8]);
-			xasprintf(&text, "%s%s [%s]%s%s", f[4],
+			if (*f[9] != '\0')
+				xasprintf(&question, " \"%s\"", f[9]);
+			xasprintf(&text, "%s%s [%s]%s%s%s", f[4],
 			    *f[7] == '1' ? "*" : "", f[6],
 			    strcmp(f[5], "control") == 0 ? " (control)" : "",
+			    question != NULL ? question : "",
 			    key != NULL ? key : "");
+			free(question);
+			question = NULL;
 			free(key);
 			key = NULL;
 		} else
@@ -698,19 +716,31 @@ window_server_public_key(struct window *w)
 }
 
 /*
- * Draw an agent's public key at the top of the preview and return how many
- * lines it took, leaving one blank line under it.
+ * Draw the question an agent is waiting on and its public key at the top of
+ * the preview and return how many lines they took, leaving one blank line
+ * under each.
  */
 static u_int
 window_server_draw_key(struct screen_write_ctx *ctx, struct window *w,
     u_int sx, u_int sy)
 {
-	struct screen	*s = ctx->s;
-	u_int		 cx = s->cx, cy = s->cy, i = 0;
-	char		*key, *copy, *next, *line;
+	struct screen		*s = ctx->s;
+	struct grid_cell	 gc;
+	u_int			 cx = s->cx, cy = s->cy, i = 0;
+	char			*key, *copy, *next, *line, *question;
+
+	if ((question = agent_question(w)) != NULL && sy >= 2) {
+		memcpy(&gc, &grid_default_cell, sizeof gc);
+		gc.attr |= GRID_ATTR_BRIGHT;
+		screen_write_cursormove(ctx, cx, cy, 0);
+		screen_write_nputs(ctx, sx, &gc, "question: %s", question);
+		i = 2;
+		screen_write_cursormove(ctx, cx, cy + i, 0);
+	}
+	free(question);
 
 	if ((key = window_server_public_key(w)) == NULL)
-		return (0);
+		return (i);
 	copy = next = key;
 	while ((line = strsep(&next, "\n")) != NULL && i < sy) {
 		if (*line == '\0' && (next == NULL || *next == '\0'))

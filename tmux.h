@@ -1079,6 +1079,7 @@ struct window {
 #define WINDOW_AGENT_PLANNER 4
 	int		 agent;
 	char		*agent_context;
+	char		*agent_task;
 	char		*agent_id;
 	char		*agent_key;
 	int		 agent_key_job;
@@ -3101,6 +3102,7 @@ const char	*agent_role(struct window *);
 char		*agent_name(struct session *);
 const char	*agent_status(struct window *);
 char		*agent_question(struct window *);
+char		*agent_task(struct window *);
 void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
 char		*agent_spawn_command(struct window *, const char *);
 char		*agent_local_command(struct session *, struct window *,

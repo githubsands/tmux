@@ -32,9 +32,14 @@ If `tmux -V` still shows the stock version in an old shell, run `rehash`.
     tmux new-agent-session -s research -a codex # use codex instead of claude
     tmux new-agent-session -s research -N 3 -l  # each agent in its own git worktree
     tmux new-agent -t research                  # add an agent to a session
+    tmux set-agent-task -p -t agent-1 'Write the parser'  # give agent-1 its task
     tmux attach -t research
 
-Aliases: `newas` and `newa`.
+Aliases: `newas`, `newa` and `setat`.
+
+The planning agent is told to hand out tasks with `set-agent-task`; `-p` also
+sends the task to the agent as a prompt and `-u` clears it. Without one, an
+agent's task is its pane title, which claude sets.
 
 ## Servers
 
@@ -43,11 +48,11 @@ Aliases: `newas` and `newa`.
 Shows every tmux server with a socket in the socket directory (this fork's
 `agents`, a stock `default` and any `-L` servers), with their sessions and
 windows underneath. Agent sessions list their agents with their status
-(`running`, `idle` or `exited`) and their key fingerprint. An idle agent
-waiting on a question shows it, so you need not open its window:
+(`running`, `idle` or `exited`), their task and key fingerprint. An idle
+agent waiting on a question shows it, so you need not open its window:
 
     q1: 4 agents, 1 waiting
-    3: agent-1 [idle] "Do you want to make this edit to parser.c?" 96D2...
+    3: agent-1 [idle] Write the parser "Do you want to make this edit to parser.c?" 96D2...
 
 The question is the lowest line on the agent's screen ending in `?`. The
 preview shows the selected window, even on another server; for an agent on

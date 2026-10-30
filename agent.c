@@ -184,6 +184,35 @@ agent_status(struct window *w)
 	return ("idle");
 }
 
+/*
+ * The task an agent is working on: the one given with set-agent-task, or else
+ * its pane title, which claude sets to a summary of the task after a symbol
+ * showing whether it is busy. Returns NULL if there is no task given and the
+ * title is still the default (the host name) or claude's own name.
+ */
+char *
+agent_task(struct window *w)
+{
+	struct window_pane	*wp = w->active;
+	const char		*title;
+	char			 host[HOST_NAME_MAX + 1];
+
+	if (w->agent == WINDOW_AGENT_NONE || w->agent == WINDOW_AGENT_OPERATOR)
+		return (NULL);
+	if (w->agent_task != NULL)
+		return (xstrdup(w->agent_task));
+	if (wp == NULL)
+		return (NULL);
+	title = wp->base.title;
+	while (*title == ' ' || (u_char)*title >= 0x80)
+		title++;
+	if (*title == '\0' || strcmp(title, "Claude Code") == 0)
+		return (NULL);
+	if (gethostname(host, sizeof host) == 0 && strcmp(title, host) == 0)
+		return (NULL);
+	return (xstrdup(title));
+}
+
 /* Is this the start of a box drawing character (U+2500 to U+257F)? */
 static int
 agent_is_box(const char *cp)
@@ -403,8 +432,15 @@ agent_spawn_command(struct window *w, const char *cmd)
 	if (!agent_is_claude(cmd))
 		return (NULL);
 	if (w->agent == WINDOW_AGENT_PLANNER &&
-	    strstr(cmd, "--permission-mode") == NULL)
-		plan = " --permission-mode plan";
+	    strstr(cmd, "--permission-mode") == NULL) {
+		plan = " --permission-mode plan --append-system-prompt "
+		    "'You are the planning agent of a tmux agent session. Give "
+		    "each agent its task with: tmux set-agent-task -p -t "
+		    "<agent> <task>. -p also sends the task to the agent as a "
+		    "prompt. List the agents with: tmux list-windows -F "
+		    "\"#{window_name} #{window_agent} #{window_agent_status} "
+		    "#{window_agent_task}\"'";
+	}
 
 	if (w->agent_context == NULL) {
 		w->agent_context = agent_uuid();

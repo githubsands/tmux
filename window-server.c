@@ -64,7 +64,7 @@ static void		 window_server_key(struct window_mode_entry *,
 	"#{session_name}\t#{session_attached}\t#{session_agents}\t" \
 	"#{window_index}\t#{window_name}\t#{window_agent}\t" \
 	"#{window_agent_status}\t#{window_active}\t#{window_agent_key}\t" \
-	"#{window_agent_question}"
+	"#{window_agent_question}\t#{window_agent_task}"
 
 static const struct menu_item window_server_menu_items[] = {
 	{ "Select", '\r', NULL },
@@ -500,10 +500,11 @@ window_server_build_server(struct window_server_modedata *data,
 {
 	struct window_server_itemdata	*item;
 	struct mode_tree_item		*mti, *smti = NULL;
-	char				*copy, *next, *line, *f[10], *text;
+	char				*copy, *next, *line, *f[11], *text;
 	char				*last = NULL, *shown, *copy2, *next2;
-	char				*line2, *g[10], *name, *key = NULL;
-	char				*question = NULL, waiting[32];
+	char				*line2, *g[11], *name, *key = NULL;
+	char				*question = NULL, *task = NULL;
+	char				 waiting[32];
 	u_int				 nsessions = 0, count, nwaiting;
 	int				 idx;
 
@@ -581,11 +582,16 @@ window_server_build_server(struct window_server_modedata *data,
 				xasprintf(&key, " %s", f[8]);
 			if (*f[9] != '\0')
 				xasprintf(&question, " \"%s\"", f[9]);
-			xasprintf(&text, "%s%s [%s]%s%s%s", f[4],
+			if (*f[10] != '\0')
+				xasprintf(&task, " %s", f[10]);
+			xasprintf(&text, "%s%s [%s]%s%s%s%s", f[4],
 			    *f[7] == '1' ? "*" : "", f[6],
+			    task != NULL ? task : "",
 			    strcmp(f[5], "control") == 0 ? " (control)" : "",
 			    question != NULL ? question : "",
 			    key != NULL ? key : "");
+			free(task);
+			task = NULL;
 			free(question);
 			question = NULL;
 			free(key);

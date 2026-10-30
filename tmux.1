@@ -1357,6 +1357,23 @@ or
 .Ic agent-command .
 .Ic new-window
 in an agent session also creates an agent.
+.Tg setat
+.It Xo Ic set-agent-task
+.Op Fl pu
+.Op Fl t Ar target-window
+.Op Ar task
+.Xc
+.D1 Pq alias: Ic setat
+Give an agent its task, shown beside its status by
+.Ic choose-server ;
+usually run by the planning agent, which is told how.
+.Fl p
+also types
+.Ar task
+into the agent as a prompt.
+.Fl u
+removes the task.
+Without one, the task is the agent's pane title, which claude sets.
 .It Xo Ic provision-server
 .Op Fl i Ar image
 .Op Fl k Ar key-name
@@ -2301,7 +2318,8 @@ Put a pane into server mode, where every
 server with a socket in the same directory as the current server may be chosen
 interactively.
 Each server is shown with the binary running it and its sessions and windows
-underneath; windows in an agent session are shown with their agent status.
+underneath; windows in an agent session are shown with their agent status
+and task.
 An idle agent waiting on a question (the lowest line on its screen ending in
 .Ql \&? )
 is shown with the question, which also heads its preview, and agent sessions
@@ -5474,6 +5492,7 @@ The following variables are available, where appropriate:
 .It Li "window_agent" Ta "" Ta "Agent role: planning, operator, control, agent or empty"
 .It Li "window_agent_key" Ta "" Ta "Fingerprint of the agent's OpenPGP key"
 .It Li "window_agent_question" Ta "" Ta "Question an idle agent is waiting on"
+.It Li "window_agent_task" Ta "" Ta "Task of the agent"
 .It Li "window_agent_status" Ta "" Ta "Agent status: running, idle or exited"
 .It Li "window_bell_flag" Ta "" Ta "1 if window has bell"
 .It Li "window_bigger" Ta "" Ta "1 if window is larger than client"

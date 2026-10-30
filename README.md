@@ -28,6 +28,7 @@ If `tmux -V` still shows the stock version in an old shell, run `rehash`.
     tmux new-agent-session -s research          # operator + control-agent
     tmux new-agent-session -s research -N 3     # ... + agent-1..agent-3
     tmux new-agent-session -s research -a codex # use codex instead of claude
+    tmux new-agent-session -s research -N 3 -l  # each agent in its own git worktree
     tmux new-agent -t research                  # add an agent to a session
     tmux attach -t research
 
@@ -47,6 +48,15 @@ starts with the agent's armored public key.
 Enter on a session or window of another server replaces the client with one
 attached to that server, using the binary that runs it, so a stock tmux
 server works too. If that fails the client comes back to the current server.
+
+## Git worktrees
+
+With `-l` (the `agent-local` option), each agent checks out its own git
+worktree of the repository it starts in, at `<repo>-agents/<session>/<agent>`
+on branch `agents/<session>/<agent>`, so agents never edit the same tree.
+Worktrees are reused by a later session of the same name. Merge an agent's
+work with `git merge agents/research/agent-1`; remove it with
+`git worktree remove <path>`.
 
 ## Agent identity
 
@@ -107,6 +117,7 @@ with it. Servers made elsewhere can be deleted with `-p` and `-l`.
 | `head-agent-command` | command for the head agent     | empty    |
 | `agent-feed`         | `off`, `file`, `input`, `both` | `file`   |
 | `agent-restore`      | `on`, `off`                    | `on`     |
+| `agent-local`        | `on`, `off`                    | `off`    |
 | `agent-operator-key` | key that signs agents' keys    | first secret key |
 
     tmux set -g agent codex

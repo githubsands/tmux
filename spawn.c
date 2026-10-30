@@ -171,6 +171,23 @@ spawn_window(struct spawn_context *sc, char **cause)
 		w = NULL;
 	sc->flags |= SPAWN_NONOTIFY;
 
+	/*
+	 * Set the name of the new window if given or an agent, before the pane
+	 * is spawned so an agent's worktree can be named after it.
+	 */
+	if (~sc->flags & SPAWN_RESPAWN) {
+		if (sc->name != NULL) {
+			free(w->name);
+			w->name = format_single(item, sc->name, c, s, NULL,
+			    NULL);
+			options_set_number(w->options, "automatic-rename", 0);
+		} else if (w->agent == WINDOW_AGENT_WORKER) {
+			free(w->name);
+			w->name = agent_name(s);
+			options_set_number(w->options, "automatic-rename", 0);
+		}
+	}
+
 	/* Spawn the pane. */
 	wp = spawn_pane(sc, cause);
 	if (wp == NULL) {
@@ -179,18 +196,11 @@ spawn_window(struct spawn_context *sc, char **cause)
 		return (NULL);
 	}
 
-	/* Set the name of the new window. */
-	if (~sc->flags & SPAWN_RESPAWN) {
+	/* Otherwise name the new window after its pane. */
+	if ((~sc->flags & SPAWN_RESPAWN) && sc->name == NULL &&
+	    w->agent != WINDOW_AGENT_WORKER) {
 		free(w->name);
-		if (sc->name != NULL) {
-			w->name = format_single(item, sc->name, c, s, NULL,
-			    NULL);
-			options_set_number(w->options, "automatic-rename", 0);
-		} else if (w->agent == WINDOW_AGENT_WORKER) {
-			w->name = agent_name(s);
-			options_set_number(w->options, "automatic-rename", 0);
-		} else
-			w->name = default_window_name(w);
+		w->name = default_window_name(w);
 	}
 	if (s->flags & SESSION_AGENTS) {
 		agent_identity(s, w);
@@ -221,6 +231,7 @@ spawn_pane(struct spawn_context *sc, char **cause)
 	struct environ		 *child;
 	struct environ_entry	 *ee;
 	char			**argv, *cp, **argvp, *argv0, *cwd, *agentcmd = NULL;
+	char			 *localcmd = NULL;
 	const char		 *cmd, *tmp;
 	int			  argc;
 	u_int			  idx;
@@ -307,6 +318,11 @@ spawn_pane(struct spawn_context *sc, char **cause)
 		argc = sc->argc;
 		argv = sc->argv;
 	}
+	if (argc == 1 && (~sc->flags & SPAWN_RESPAWN) &&
+	    (localcmd = agent_local_command(s, w, argv[0])) != NULL) {
+		cmd = localcmd;
+		argv = (char **)&cmd;
+	}
 	if (cwd != NULL) {
 		free(new_wp->cwd);
 		new_wp->cwd = cwd;
@@ -322,6 +338,7 @@ spawn_pane(struct spawn_context *sc, char **cause)
 		new_wp->argv = cmd_copy_argv(argc, argv);
 	}
 	free(agentcmd);
+	free(localcmd);
 
 	/* Create an environment for this pane. */
 	child = environ_for_session(s, 0);

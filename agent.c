@@ -342,6 +342,52 @@ agent_spawn_command(struct window *w, const char *cmd)
 	return (new);
 }
 
+/* Copy a name for use in a branch and path, replacing unsafe characters. */
+static char *
+agent_local_name(const char *name)
+{
+	char	*copy, *cp;
+
+	copy = xstrdup(name);
+	for (cp = copy; *cp != '\0'; cp++) {
+		if (!isalnum((u_char)*cp) && strchr("-_", *cp) == NULL)
+			*cp = '-';
+	}
+	return (copy);
+}
+
+/*
+ * Command to start an agent with if agent-local is on: give it its own git
+ * worktree, <repository>-agents/<session>/<agent> beside the repository the
+ * pane starts in, on branch agents/<session>/<agent>. An existing worktree is
+ * reused. If there is no repository or the worktree cannot be made, the agent
+ * runs where it started. Returns NULL if agent-local is off.
+ */
+char *
+agent_local_command(struct session *s, struct window *w, const char *cmd)
+{
+	char	*sname, *wname, *new;
+
+	if (w->agent != WINDOW_AGENT_HEAD && w->agent != WINDOW_AGENT_WORKER)
+		return (NULL);
+	if (!options_get_number(s->options, "agent-local"))
+		return (NULL);
+
+	sname = agent_local_name(s->name);
+	wname = agent_local_name(w->name);
+	xasprintf(&new, "b=agents/%s/%s; "
+	    "r=$(git rev-parse --show-toplevel 2>/dev/null) && "
+	    "wt=\"$r-agents/%s/%s\" && "
+	    "{ [ -d \"$wt\" ] || { mkdir -p \"${wt%%/*}\" && "
+	    "{ git -C \"$r\" worktree add -q \"$wt\" \"$b\" 2>/dev/null || "
+	    "git -C \"$r\" worktree add -q -b \"$b\" \"$wt\"; }; }; } && "
+	    "cd \"$wt\" || echo \"tmux: no git worktree, running in $PWD\" >&2; "
+	    "%s", sname, wname, sname, wname, cmd);
+	free(sname);
+	free(wname);
+	return (new);
+}
+
 /* Write the record of every agent in a session to the record file. */
 void
 agent_save(struct session *s)

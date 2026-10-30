@@ -458,6 +458,14 @@ const struct options_table_entry options_table[] = {
 		  "input, or both."
 	},
 
+	{ .name = "agent-local",
+	  .type = OPTIONS_TABLE_FLAG,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .default_num = 0,
+	  .text = "Whether each agent works in its own git worktree of the "
+		  "repository it is started in."
+	},
+
 	{ .name = "agent-operator-key",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_SESSION,

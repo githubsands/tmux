@@ -1228,7 +1228,7 @@ Lock all clients attached to
 .Ar target-session .
 .Tg newas
 .It Xo Ic new-agent-session
-.Op Fl AdDEPX
+.Op Fl AdDElPX
 .Op Fl a Ar agent
 .Op Fl c Ar start-directory
 .Op Fl e Ar environment
@@ -1267,6 +1267,10 @@ option for the session; that many agents are started after the head
 agent, so the session has
 .Ar agents
 plus two windows.
+.Fl l
+sets the
+.Ic agent-local
+option for the session.
 .Pp
 Every other window in the session is an agent.
 Unless given a name with
@@ -3973,6 +3977,17 @@ or
 .Ic both .
 The default is
 .Ic file .
+.It Xo Ic agent-local
+.Op Ic on | off
+.Xc
+If on, each agent works in its own git worktree of the repository it starts
+in,
+.Pa <repository>-agents/<session>/<agent> ,
+on branch
+.Ql agents/<session>/<agent> .
+An existing worktree is reused.
+Without a repository the agent runs where it started.
+The default is off.
 .It Ic agent-operator-key Ar key
 The key the operator signs agents' keys with, as a fingerprint, key id or
 user id.

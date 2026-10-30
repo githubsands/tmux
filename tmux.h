@@ -3101,6 +3101,8 @@ char		*agent_name(struct session *);
 const char	*agent_status(struct window *);
 void		 agent_pane_output(struct window_pane *, const u_char *, size_t);
 char		*agent_spawn_command(struct window *, const char *);
+char		*agent_local_command(struct session *, struct window *,
+		     const char *);
 int		 agent_restore(struct window_pane *);
 void		 agent_save(struct session *);
 void		 agent_spawn_environ(struct window *, struct environ *);

@@ -298,6 +298,8 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 		options_set_number(oo, "agent", agent);
 	if (nagents != -1)
 		options_set_number(oo, "agent-count", nagents);
+	if (agents && args_has(args, 'l'))
+		options_set_number(oo, "agent-local", 1);
 	env = environ_create();
 	if (c != NULL && !args_has(args, 'E'))
 		environ_update(global_s_options, c->environ, env);

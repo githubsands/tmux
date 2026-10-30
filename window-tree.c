@@ -48,6 +48,8 @@ static void		 window_tree_key(struct window_mode_entry *,
 			"#{window_name}#{window_flags}" \
 			"#{?window_agent_status," \
 				" [#{window_agent_status}]" \
+				"#{?window_agent_task, #{window_agent_task},}" \
+				"#{?window_agent_question, \"#{window_agent_question}\",}" \
 			"," \
 				"#{?#{&&:#{==:#{window_panes},1},#{&&:#{pane_title},#{!=:#{pane_title},#{host_short}}}},: \"#{pane_title}\",}" \
 			"}" \
@@ -551,7 +553,7 @@ window_tree_draw_agents(struct window_tree_modedata *data, struct session *s,
 	u_int			 current, start, end, remaining, i;
 	struct grid_cell	 gc;
 	int			 colour, active_colour;
-	char			*label;
+	char			*label, *task;
 
 	total = winlink_count(&s->windows);
 
@@ -627,10 +629,13 @@ window_tree_draw_agents(struct window_tree_modedata *data, struct session *s,
 		screen_write_cursormove(ctx, cx, cy + offset, 0);
 		screen_write_preview(ctx, &w->active->base, sx, height);
 
-		xasprintf(&label, " %u:%s [%s]%s%s ", wl->idx, w->name,
+		task = agent_task(w);
+		xasprintf(&label, " %u:%s [%s]%s%s%s%s ", wl->idx, w->name,
 		    w->agent == WINDOW_AGENT_OPERATOR ? "operator" :
-		    agent_status(w), (i == 0 && start != 0) ? " ^" : "",
+		    agent_status(w), task != NULL ? " " : "",
+		    task != NULL ? task : "", (i == 0 && start != 0) ? " ^" : "",
 		    (loop == end - 1 && end != total) ? " v" : "");
+		free(task);
 		if (strlen(label) > sx) {
 			free(label);
 			xasprintf(&label, "%u", wl->idx);

@@ -1288,7 +1288,8 @@ Each agent has a status: running if it has written output in the last five
 seconds, idle if not, or exited if its pane is dead.
 In
 .Ic choose-tree ,
-agent sessions are always expanded to list their agents with their status.
+agent sessions are always expanded to list their agents with their status,
+task and any question they are waiting on.
 .Pp
 Output from agents has
 escape sequences removed, is split into lines prefixed with

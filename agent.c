@@ -32,11 +32,13 @@
 #include "tmux.h"
 
 /*
- * Agent sessions. The first window is the operator, a shell for the user. The
- * second is the head agent, named control-agent; every other window is an
- * agent whose output is stripped of escape sequences, split into lines tagged
- * with the agent and multiplexed to the head agent, either through a feed file
- * (named by $TMUX_AGENT_FEED) or by writing it to the head agent's input.
+ * Agent sessions. The first window is planning, an agent that only plans (a
+ * claude agent runs in plan mode). The second is the operator, a shell for the
+ * user. The third is the head agent, named control-agent; every other window
+ * is an agent whose output is stripped of escape sequences, split into lines
+ * tagged with the agent and multiplexed to the head agent, either through a
+ * feed file (named by $TMUX_AGENT_FEED) or by writing it to the head agent's
+ * input.
  *
  * Each claude agent is started with its own conversation (--session-id) and
  * the conversation of every agent is recorded in a file named by
@@ -139,6 +141,8 @@ const char *
 agent_role(struct window *w)
 {
 	switch (w->agent) {
+	case WINDOW_AGENT_PLANNER:
+		return ("planning");
 	case WINDOW_AGENT_OPERATOR:
 		return ("operator");
 	case WINDOW_AGENT_HEAD:
@@ -322,23 +326,31 @@ agent_uuid(void)
 
 /*
  * Command to start a claude agent with: give it a new conversation the first
- * time and resume that conversation after. Returns NULL for other commands.
+ * time and resume that conversation after. The planning agent is also put in
+ * plan mode. Returns NULL for other commands.
  */
 char *
 agent_spawn_command(struct window *w, const char *cmd)
 {
-	char	*new;
+	const char	*plan = "";
+	char		*new;
 
-	if (w->agent != WINDOW_AGENT_HEAD && w->agent != WINDOW_AGENT_WORKER)
+	if (w->agent != WINDOW_AGENT_HEAD &&
+	    w->agent != WINDOW_AGENT_WORKER &&
+	    w->agent != WINDOW_AGENT_PLANNER)
 		return (NULL);
 	if (!agent_is_claude(cmd))
 		return (NULL);
+	if (w->agent == WINDOW_AGENT_PLANNER &&
+	    strstr(cmd, "--permission-mode") == NULL)
+		plan = " --permission-mode plan";
 
 	if (w->agent_context == NULL) {
 		w->agent_context = agent_uuid();
-		xasprintf(&new, "%s --session-id %s", cmd, w->agent_context);
+		xasprintf(&new, "%s%s --session-id %s", cmd, plan,
+		    w->agent_context);
 	} else
-		xasprintf(&new, "%s --resume %s", cmd, w->agent_context);
+		xasprintf(&new, "%s%s --resume %s", cmd, plan, w->agent_context);
 	return (new);
 }
 
@@ -539,7 +551,9 @@ agent_spawn_environ(struct window *w, struct environ *env)
 {
 	char	*home, *parent;
 
-	if (w->agent != WINDOW_AGENT_HEAD && w->agent != WINDOW_AGENT_WORKER)
+	if (w->agent != WINDOW_AGENT_HEAD &&
+	    w->agent != WINDOW_AGENT_WORKER &&
+	    w->agent != WINDOW_AGENT_PLANNER)
 		return;
 	if (w->agent_id == NULL)
 		w->agent_id = agent_uuid();

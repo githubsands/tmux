@@ -1246,10 +1246,15 @@ Lock all clients attached to
 Create a new agent session.
 This takes the same arguments as
 .Ic new-session .
-The first window is the operator, named
+The first window, and the current one, is the planning agent, named
+.Ql planning
+and running
+.Ic planning-command ;
+a claude planning agent runs in plan mode, so it plans but does not edit.
+The second is the operator, named
 .Ql operator ,
 running the default shell for the user.
-The second is the head agent, named
+The third is the head agent, named
 .Ql control-agent
 and running
 .Ar shell-command
@@ -1266,7 +1271,7 @@ sets the
 option for the session; that many agents are started after the head
 agent, so the session has
 .Ar agents
-plus two windows.
+plus three windows.
 .Fl l
 sets the
 .Ic agent-local
@@ -3999,6 +4004,11 @@ If on, a claude agent that exits is restarted, resuming its conversation.
 An agent that exits five times within 30 seconds is not restarted again.
 Killing the agent's window or pane does not restart it.
 The default is on.
+.It Ic planning-command Ar shell-command
+Command run by the planning agent of a new agent session.
+If empty, the
+.Ic agent
+option is used.
 .It Ic head-agent-command Ar shell-command
 Command run by the head agent of a new agent session.
 If empty, the
@@ -5457,7 +5467,7 @@ The following variables are available, where appropriate:
 .It Li "window_active_sessions_list" Ta "" Ta "List of sessions on which this window is active"
 .It Li "window_activity" Ta "" Ta "Time of window last activity"
 .It Li "window_activity_flag" Ta "" Ta "1 if window has activity"
-.It Li "window_agent" Ta "" Ta "Agent role: operator, control, agent or empty"
+.It Li "window_agent" Ta "" Ta "Agent role: planning, operator, control, agent or empty"
 .It Li "window_agent_key" Ta "" Ta "Fingerprint of the agent's OpenPGP key"
 .It Li "window_agent_status" Ta "" Ta "Agent status: running, idle or exited"
 .It Li "window_bell_flag" Ta "" Ta "1 if window has bell"

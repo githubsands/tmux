@@ -313,10 +313,26 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 		agent_session_init(s);
 
 	/*
-	 * In an agent session, spawn the operator shell first so it is the
-	 * current window, followed by the head agent.
+	 * In an agent session, spawn the planning agent first so it is the
+	 * first and current window, then the operator shell and the head agent.
 	 */
 	if (agents) {
+		memset(&asc, 0, sizeof asc);
+		asc.item = item;
+		asc.s = s;
+		if (!detached)
+			asc.tc = c;
+		asc.name = "planning";
+		asc.agent = WINDOW_AGENT_PLANNER;
+		asc.idx = -1;
+		asc.cwd = args_get(args, 'c');
+		if (spawn_window(&asc, &cause) == NULL) {
+			session_destroy(s, 0, __func__);
+			cmdq_error(item, "create planning failed: %s", cause);
+			free(cause);
+			goto fail;
+		}
+
 		memset(&asc, 0, sizeof asc);
 		asc.item = item;
 		asc.s = s;
@@ -325,6 +341,7 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 		asc.name = "operator";
 		asc.agent = WINDOW_AGENT_OPERATOR;
 		asc.idx = -1;
+		asc.flags = SPAWN_DETACHED;
 		asc.cwd = args_get(args, 'c');
 		if (spawn_window(&asc, &cause) == NULL) {
 			session_destroy(s, 0, __func__);
@@ -360,7 +377,7 @@ cmd_new_session_run(struct cmd *self, struct cmdq_item *item, int agents)
 		goto fail;
 	}
 
-	/* Spawn the other agents after the head, leaving the operator current. */
+	/* Spawn the other agents after the head, leaving planning current. */
 	nagents = agents ? options_get_number(s->options, "agent-count") : 0;
 	for (i = 0; i < nagents; i++) {
 		memset(&asc, 0, sizeof asc);

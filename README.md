@@ -2,15 +2,17 @@
 
 A tmux fork where a session can run a team of CLI agents (claude, codex or
 openai). Each agent is a window running one agent process. The first window
-is `operator`, a shell for you; the second is `control-agent`, the head agent,
-which gets the output of every other agent as one multiplexed stream.
+is `planning`, an agent for planning only (claude runs with
+`--permission-mode plan`); the second is `operator`, a shell for you; the third
+is `control-agent`, the head agent, which gets the output of every other agent
+as one multiplexed stream.
 
 ![agent system](docs/agent-system.png)
 
 Feed lines look like:
 
-    [2:agent-1] wrote parser.c
-    [3:agent-2] tests passing
+    [3:agent-1] wrote parser.c
+    [4:agent-2] tests passing
 
 Every agent session lives in one tmux server, reached through its own socket
 (`agents`, or the name in `$TMUX_AGENTS`), so it never talks to a stock tmux
@@ -25,7 +27,7 @@ If `tmux -V` still shows the stock version in an old shell, run `rehash`.
 
 ## Commands
 
-    tmux new-agent-session -s research          # operator + control-agent
+    tmux new-agent-session -s research          # planning, operator, control-agent
     tmux new-agent-session -s research -N 3     # ... + agent-1..agent-3
     tmux new-agent-session -s research -a codex # use codex instead of claude
     tmux new-agent-session -s research -N 3 -l  # each agent in its own git worktree
@@ -60,7 +62,7 @@ work with `git merge agents/research/agent-1`; remove it with
 
 ## Agent identity
 
-Every agent (`control-agent` and each `agent-N`) has its own OpenPGP identity:
+Every agent (`planning`, `control-agent` and each `agent-N`) has its own OpenPGP identity:
 an ed25519 key made with `gpg` in its own GnuPG home,
 `<socket dir>/agent-keys/<agent id>` (mode 0700). Inside the agent,
 `GNUPGHOME` points there and `TMUX_AGENT_ID` is set, so only that agent holds
@@ -115,6 +117,7 @@ with it. Servers made elsewhere can be deleted with `-p` and `-l`.
 | `agent-count`        | number of agents besides head  | `0`      |
 | `agent-command`      | command for the agents         | empty    |
 | `head-agent-command` | command for the head agent     | empty    |
+| `planning-command`   | command for the planning agent | empty    |
 | `agent-feed`         | `off`, `file`, `input`, `both` | `file`   |
 | `agent-restore`      | `on`, `off`                    | `on`     |
 | `agent-local`        | `on`, `off`                    | `off`    |
@@ -137,8 +140,9 @@ conversation in the file named by `$TMUX_AGENT_RECORD`
 session ends:
 
     # session research: index name role conversation restores cwd key
-    1	control-agent	control	98357576-...	0	/src/app	629129354411D1FE...
-    2	agent-1	agent	1392b7be-...	1	/src/app	67CBDC32C51EE6A2...
+    0	planning	planning	5e0c1a2d-...	0	/src/app	A41F09C2D7B3E815...
+    2	control-agent	control	98357576-...	0	/src/app	629129354411D1FE...
+    3	agent-1	agent	1392b7be-...	1	/src/app	67CBDC32C51EE6A2...
 
 If a claude agent exits or crashes, it is restarted in the same window with
 `claude --resume <uuid>`, so it picks up its saved context. An agent that

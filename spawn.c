@@ -296,6 +296,8 @@ spawn_pane(struct spawn_context *sc, char **cause)
 	if (sc->argc == 0 && (~sc->flags & SPAWN_RESPAWN)) {
 		if (w->agent == WINDOW_AGENT_HEAD)
 			cmd = options_get_string(s->options, "head-agent-command");
+		else if (w->agent == WINDOW_AGENT_PLANNER)
+			cmd = options_get_string(s->options, "planning-command");
 		else if (w->agent == WINDOW_AGENT_WORKER)
 			cmd = options_get_string(s->options, "agent-command");
 		else

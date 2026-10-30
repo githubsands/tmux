@@ -1076,6 +1076,7 @@ struct window {
 #define WINDOW_AGENT_HEAD 1
 #define WINDOW_AGENT_WORKER 2
 #define WINDOW_AGENT_OPERATOR 3
+#define WINDOW_AGENT_PLANNER 4
 	int		 agent;
 	char		*agent_context;
 	char		*agent_id;

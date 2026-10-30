@@ -490,6 +490,14 @@ const struct options_table_entry options_table[] = {
 		  "started."
 	},
 
+	{ .name = "planning-command",
+	  .type = OPTIONS_TABLE_STRING,
+	  .scope = OPTIONS_TABLE_SESSION,
+	  .default_str = "",
+	  .text = "Command to run as the planning agent of a new agent session. "
+		  "If empty, the agent option is used."
+	},
+
 	{ .name = "head-agent-command",
 	  .type = OPTIONS_TABLE_STRING,
 	  .scope = OPTIONS_TABLE_SESSION,
